@@ -1,4 +1,4 @@
-package model;
+package airline.model;
 
 public class Airport {
 	

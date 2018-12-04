@@ -1,4 +1,4 @@
-package model;
+package airline.model;
 
 import java.util.Date;
 
@@ -12,12 +12,18 @@ public class User {
 	private Integer id;
 	private String userName;
 	private String password;
+	private String firstName;
+	private String lastName;
 	private Date registrationDate;
 	private Role role;
 	private Boolean blocked;
 	
+	public User() {
+		
+	}
 	
-	public User(Integer id, String userName, String password, Date registrationDate, Role role, Boolean blocked) {
+	
+	public User(Integer id, String userName, String password, String firstName, String lastName, Date registrationDate, Role role, Boolean blocked) {
 		super();
 		this.id = id;
 		this.userName = userName;
@@ -25,6 +31,28 @@ public class User {
 		this.registrationDate = registrationDate;
 		this.role = role;
 		this.blocked = blocked;
+	}
+
+
+	
+	
+	public String getFirstName() {
+		return firstName;
+	}
+
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+
+	public String getLastName() {
+		return lastName;
+	}
+
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 
