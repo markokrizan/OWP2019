@@ -3,7 +3,7 @@ package airline.model;
 public class Airport {
 	
 	private int id;
-	private int name;
+	private String name;
 	
 	
 	public Airport() {
@@ -11,7 +11,7 @@ public class Airport {
 	}
 
 
-	public Airport(int id, int name) {
+	public Airport(int id, String name) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -28,12 +28,12 @@ public class Airport {
 	}
 
 
-	public int getName() {
+	public String getName() {
 		return name;
 	}
 
 
-	public void setName(int name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 	

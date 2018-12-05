@@ -1,5 +1,6 @@
 package airline;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -22,7 +23,10 @@ public class InitListener implements ServletContextListener {
 	}
 
 	public void contextInitialized(ServletContextEvent arg0) {
-		// TODO Auto-generated method stub
+		
+		Boolean connected = false;
+		ServletContext context = arg0.getServletContext();
+		context.setAttribute("connected", connected);
 		
 	}
 	

@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class User {
 	
-	private enum Role{
+	public enum Role{
 		REGULAR,
 		ADMIN
 	}
