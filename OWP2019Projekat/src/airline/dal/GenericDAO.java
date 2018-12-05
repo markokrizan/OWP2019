@@ -201,7 +201,235 @@ public class GenericDAO {
 	
 	//add
 	
+	public static boolean insert(Table table, Object object) {
+		
+		Connection conn = ConnectionManager.getConnection();
+
+		PreparedStatement pstmt = null;
+		
+		String query = null;
+		
+		try {
+			
+			if(table == Table.AIRPORT) {
+				query = "INSERT INTO Airport (name) VALUES (?)";
+				pstmt = conn.prepareStatement(query);
+				Airport paramObject = (Airport)object;
+				
+				pstmt.setString(1, paramObject.getName());
+				
+				System.out.println(pstmt);
+				return pstmt.executeUpdate() == 1;
+				
+			}else if (table == Table.FLIGHT) {
+				query = "INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price)"
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+				pstmt = conn.prepareStatement(query);
+				Flight paramObject = (Flight)object;
+				
+				pstmt.setString(1, paramObject.getNumber());
+				pstmt.setObject(2, paramObject.getDeparture());
+				pstmt.setObject(3, paramObject.getArrival());
+				pstmt.setInt(4, paramObject.getFlyingFrom().getId());
+				pstmt.setInt(5, paramObject.getFlyingTo().getId());
+				pstmt.setInt(6, paramObject.getNumberOfSeats());
+				pstmt.setDouble(7, paramObject.getPrice());
+				
+				System.out.println(pstmt);
+				return pstmt.executeUpdate() == 1;
+				
+				
+				
+			}else if (table == Table.USER) {
+				query = "INSERT INTO User(user_name, password, first_name, last_name, registration_date, role, blocked)"
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+				pstmt = conn.prepareStatement(query);
+				User paramObject = (User)object;
+				
+				pstmt.setString(1, paramObject.getUserName());
+				pstmt.setString(2, paramObject.getPassword());
+				pstmt.setString(3, paramObject.getFirstName());
+				pstmt.setString(4, paramObject.getLastName());
+				pstmt.setObject(5, paramObject.getRegistrationDate());
+				pstmt.setString(6, paramObject.getRole().toString());
+				pstmt.setBoolean(7, paramObject.getBlocked());
+				
+				System.out.println(pstmt);
+				return pstmt.executeUpdate() == 1;
+				
+			}else if (table == Table.TICKET) {
+				
+				query = "INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id)"
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+				
+				pstmt = conn.prepareStatement(query);
+				Ticket paramObject = (Ticket)object;
+				
+				pstmt.setInt(1, paramObject.getDepartureFlight().getId());
+				pstmt.setInt(2, paramObject.getArrivalFlight().getId());
+				pstmt.setInt(3, paramObject.getDepartureFlightSeatNumber());
+				pstmt.setInt(4, paramObject.getArrivalFlightSeatNumber());
+				pstmt.setObject(5, paramObject.getReservationDate());
+				pstmt.setObject(6, paramObject.getTicketSaleDate());
+				pstmt.setInt(7, paramObject.getUser().getId());
+				
+				System.out.println(pstmt);
+				return pstmt.executeUpdate() == 1;
+				
+				
+			}else {
+				return false;
+			}
+			
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			// zatvaranje naredbe i rezultata
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		return false;
+		
+	}
+	
+	
+	
 	//update
+	public static boolean update(Table table, Object object) {
+		
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		
+		String query = null;
+		
+		
+		
+		try {
+			
+			if(table == Table.AIRPORT) {
+				
+				query = "UPDATE Airport SET " +
+						"name = ? " + 
+						
+						"WHERE airport_id = ?";
+				
+				
+				pstmt = conn.prepareStatement(query);
+				Airport paramObject = (Airport)object;
+				
+				pstmt.setString(1, paramObject.getName());
+				
+				pstmt.setInt(2, paramObject.getId());
+				
+				System.out.println(pstmt);
+				return pstmt.executeUpdate() == 1;
+			
+				
+			}else if (table == Table.FLIGHT) {
+				query = "UPDATE Flight SET "
+						+ "number = ? "
+						+ "departure_date = ? "
+						+ "arrival_date = ? "
+						+ "departure_airport_id = ? "
+						+ "arrival_airport_id = ? "
+						+ "no_of_seats = ? "
+						+ "price = ? "
+						
+						+ "WHERE flight_id = ? ";
+				
+				pstmt = conn.prepareStatement(query);
+				Flight paramObject = (Flight)object;
+				
+				pstmt.setString(1, paramObject.getNumber());
+				pstmt.setObject(2, paramObject.getDeparture());
+				pstmt.setObject(3, paramObject.getArrival());
+				pstmt.setInt(4, paramObject.getFlyingFrom().getId());
+				pstmt.setInt(5, paramObject.getFlyingTo().getId());
+				pstmt.setInt(6, paramObject.getNumberOfSeats());
+				pstmt.setDouble(7, paramObject.getPrice());
+				
+				pstmt.setInt(8, paramObject.getId());
+				
+				System.out.println(pstmt);
+				return pstmt.executeUpdate() == 1;
+				
+				
+			
+			}else if (table == Table.USER) {
+				query = "UPDATE User SET "
+						+ "user_name = ? "
+						+ "password = ? "
+						+ "first_name = ? "
+						+ "last_name = ? "
+						+ "registration_date = ? "
+						+ "role = ? "
+						+ "blocked = ? "
+						
+						+ "WHERE user_id = ?";
+				
+				pstmt = conn.prepareStatement(query);
+				User paramObject = (User)object;
+				
+				pstmt.setString(1, paramObject.getUserName());
+				pstmt.setString(2, paramObject.getPassword());
+				pstmt.setString(3, paramObject.getFirstName());
+				pstmt.setString(4, paramObject.getLastName());
+				pstmt.setObject(5, paramObject.getRegistrationDate());
+				pstmt.setString(6, paramObject.getRole().toString());
+				pstmt.setBoolean(7, paramObject.getBlocked());
+				
+				pstmt.setInt(8, paramObject.getId());
+				
+				System.out.println(pstmt);
+				return pstmt.executeUpdate() == 1;
+		
+				
+			}else if (table == Table.TICKET) {
+				
+				query = "UPDATE Ticket SET "
+						+ "departure_flight_id = ? "
+						+ "arrival_flight_id = ? "
+						+ "departure_flight_seat_no = ?"
+						+ "arrival_flight_seat_no = ?"
+						+ "reservation_date = ? "
+						+ "sale_date = ? "
+						+ "user_id = ? "
+						
+						+ "WHERE ticket_id = ?";
+				
+				pstmt = conn.prepareStatement(query);
+				Ticket paramObject = (Ticket)object;
+				
+				pstmt.setInt(1, paramObject.getDepartureFlight().getId());
+				pstmt.setInt(2, paramObject.getArrivalFlight().getId());
+				pstmt.setInt(3, paramObject.getDepartureFlightSeatNumber());
+				pstmt.setInt(4, paramObject.getArrivalFlightSeatNumber());
+				pstmt.setObject(5, paramObject.getReservationDate());
+				pstmt.setObject(6, paramObject.getTicketSaleDate());
+				pstmt.setInt(7, paramObject.getUser().getId());
+				
+				pstmt.setInt(8, paramObject.getId());
+				
+				System.out.println(pstmt);
+				return pstmt.executeUpdate() == 1;
+				
+				
+				
+			}else {
+				return false;
+			}
+		
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			// zatvaranje naredbe i rezultata
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+
+		return false;
+	}
+	
 	
 	//delete
 	
