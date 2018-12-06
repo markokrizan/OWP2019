@@ -4,6 +4,7 @@ public class Airport {
 	
 	private int id;
 	private String name;
+	private Boolean deleted;
 	
 	
 	public Airport() {
@@ -11,11 +12,16 @@ public class Airport {
 	}
 
 
-	public Airport(int id, String name) {
+	public Airport(int id, String name, Boolean deleted) {
 		super();
 		this.id = id;
 		this.name = name;
+		this.deleted = deleted;
 	}
+
+	
+
+
 
 
 	public int getId() {
@@ -35,6 +41,15 @@ public class Airport {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 	
 	

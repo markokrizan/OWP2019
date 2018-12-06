@@ -17,13 +17,14 @@ public class User {
 	private Date registrationDate;
 	private Role role;
 	private Boolean blocked;
+	private Boolean deleted;
 	
 	public User() {
 		
 	}
 	
 	
-	public User(Integer id, String userName, String password, String firstName, String lastName, Date registrationDate, Role role, Boolean blocked) {
+	public User(Integer id, String userName, String password, String firstName, String lastName, Date registrationDate, Role role, Boolean blocked, Boolean deleted) {
 		super();
 		this.id = id;
 		this.userName = userName;
@@ -31,6 +32,7 @@ public class User {
 		this.registrationDate = registrationDate;
 		this.role = role;
 		this.blocked = blocked;
+		this.deleted = deleted;
 	}
 
 
@@ -114,6 +116,18 @@ public class User {
 	public void setBlocked(Boolean blocked) {
 		this.blocked = blocked;
 	}
+
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	
 	
 	
 	

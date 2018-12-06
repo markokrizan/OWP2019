@@ -25,6 +25,7 @@ DROP TABLE IF EXISTS `Airline`.`Airport` ;
 CREATE TABLE IF NOT EXISTS `Airline`.`Airport` (
   `airport_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL,
+  `deleted` TINYINT NOT NULL,
   PRIMARY KEY (`airport_id`))
 ENGINE = InnoDB;
 
@@ -43,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `Airline`.`Flight` (
   `arrival_airport_id` INT NOT NULL,
   `no_of_seats` INT NOT NULL,
   `price` DOUBLE NOT NULL,
+  `deleted` TINYINT NOT NULL,
   PRIMARY KEY (`flight_id`),
   CONSTRAINT `departure_airport_id`
     FOREIGN KEY (`departure_airport_id`)
@@ -71,6 +73,7 @@ CREATE TABLE IF NOT EXISTS `Airline`.`User` (
   `registration_date` DATE NOT NULL,
   `role` ENUM('REGULAR', 'ADMIN') NOT NULL,
   `blocked` TINYINT NOT NULL,
+  `deleted` TINYINT NOT NULL,
   PRIMARY KEY (`user_id`))
 ENGINE = InnoDB;
 
@@ -89,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `Airline`.`Ticket` (
   `reservation_date` DATETIME NULL,
   `sale_date` DATETIME NULL,
   `user_id` INT NULL,
+  `deleted` TINYINT NOT NULL,
   PRIMARY KEY (`ticket_id`),
   CONSTRAINT `departure_flight_id`
     FOREIGN KEY (`departure_flight_id`)

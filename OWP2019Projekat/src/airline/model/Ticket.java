@@ -15,6 +15,7 @@ public class Ticket {
 	//if this field is filled also reservation becomes a sale
 	private Date ticketSaleDate;
 	private User user;
+	private Boolean deleted;
 	
 	public Ticket() {
 		
@@ -22,7 +23,7 @@ public class Ticket {
 	}
 
 	public Ticket(Integer id, Flight departureFlight, Flight arrivalFlight, Integer departureFlightSeatNumber,
-			Integer arrivalFlightSeatNumber, Date reservationDate, Date ticketSaleDate, User user) {
+			Integer arrivalFlightSeatNumber, Date reservationDate, Date ticketSaleDate, User user, Boolean deleted) {
 		super();
 		this.id = id;
 		this.departureFlight = departureFlight;
@@ -32,6 +33,7 @@ public class Ticket {
 		this.reservationDate = reservationDate;
 		this.ticketSaleDate = ticketSaleDate;
 		this.user = user;
+		this.deleted = deleted;
 	}
 
 	
@@ -98,6 +100,16 @@ public class Ticket {
 	public void setUser(User user) {
 		this.user = user;
 	}
+
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
+	}
+	
+	
 	
 	
 	

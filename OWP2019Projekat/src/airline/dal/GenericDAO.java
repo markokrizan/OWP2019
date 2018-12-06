@@ -53,7 +53,7 @@ public class GenericDAO {
 		String idName = idHelper(table);
 		
 		try {
-			String query = "SELECT * FROM " + table.toString() + " WHERE" + idName + "=?";
+			String query = "SELECT * FROM " + table.toString() + " WHERE" + idName + "=? AND deleted = 0";
 	
 
 			pstmt = conn.prepareStatement(query);
@@ -67,7 +67,8 @@ public class GenericDAO {
 				if(table == Table.AIRPORT) {
 					Integer airportId = rset.getInt("airport_id");
 					String name = rset.getString("name");
-					return new Airport(airportId, name);
+					Boolean deleted = rset.getBoolean("deleted");
+					return new Airport(airportId, name, deleted);
 					
 				}else if(table == Table.FLIGHT) {
 					Integer flightId = rset.getInt("flight_id");
@@ -78,8 +79,9 @@ public class GenericDAO {
 					Airport arrivalAirport = (Airport)getOne(Table.AIRPORT, rset.getInt("arrival_airport_id"));
 					Integer noOfSeats = rset.getInt("no_of_seats");
 					Double price = rset.getDouble("price");
+					Boolean deleted = rset.getBoolean("deleted");
 					return new Flight(flightId, number, departureDate, arrivalDate, departureAirport, arrivalAirport, noOfSeats,
-							price);
+							price, deleted);
 					
 				}else if(table == Table.USER) {
 					Integer userId = rset.getInt("user_id");
@@ -90,7 +92,8 @@ public class GenericDAO {
 					Date registrationDate = rset.getDate("registration_date");
 					Role role = Role.valueOf(rset.getString("role"));
 					Boolean blocked = rset.getBoolean("blocked");
-					return new User(userId, userName, password, firstName, lastName, registrationDate, role, blocked);
+					Boolean deleted = rset.getBoolean("deleted");
+					return new User(userId, userName, password, firstName, lastName, registrationDate, role, blocked, deleted);
 					
 					
 				}else if(table == Table.TICKET) {
@@ -102,9 +105,10 @@ public class GenericDAO {
 					Date reservationDate = rset.getDate("reservation_date");
 					Date saleDate = rset.getDate("sale_date");
 					User user = (User)getOne(Table.USER, rset.getInt("user_id"));
+					Boolean deleted = rset.getBoolean("deleted");
 					
 					return new Ticket(ticketId, departureFlight, arrivalFlight, departureFlightSeatNo, arrrivalFlightSeatNo, 
-							reservationDate, saleDate, user);
+							reservationDate, saleDate, user, deleted);
 					
 				}else {
 					return null;
@@ -132,7 +136,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM " + table.toString();
+			String query = "SELECT * FROM " + table.toString() + " WHERE deleted = 0";
 
 			pstmt = conn.prepareStatement(query);
 			System.out.println(pstmt);
@@ -143,7 +147,8 @@ public class GenericDAO {
 				if(table == Table.AIRPORT) {
 					Integer airportId = rset.getInt("airport_id");
 					String name = rset.getString("name");
-					objects.add((new Airport(airportId, name)));
+					Boolean deleted = rset.getBoolean("deleted");
+					objects.add((new Airport(airportId, name, deleted)));
 					
 				}else if(table == Table.FLIGHT) {
 					Integer flightId = rset.getInt("flight_id");
@@ -154,8 +159,9 @@ public class GenericDAO {
 					Airport arrivalAirport = (Airport)getOne(Table.AIRPORT, rset.getInt("arrival_airport_id"));
 					Integer noOfSeats = rset.getInt("no_of_seats");
 					Double price = rset.getDouble("price");
+					Boolean deleted = rset.getBoolean("deleted");
 					objects.add(new Flight(flightId, number, departureDate, arrivalDate, departureAirport, arrivalAirport, noOfSeats,
-							price));
+							price, deleted));
 					
 				}else if(table == Table.USER) {
 					Integer userId = rset.getInt("user_id");
@@ -166,7 +172,8 @@ public class GenericDAO {
 					Date registrationDate = rset.getDate("registration_date");
 					Role role = Role.valueOf(rset.getString("role"));
 					Boolean blocked = rset.getBoolean("blocked");
-					objects.add(new User(userId, userName, password, firstName, lastName, registrationDate, role, blocked));
+					Boolean deleted = rset.getBoolean("deleted");
+					objects.add(new User(userId, userName, password, firstName, lastName, registrationDate, role, blocked, deleted));
 					
 					
 				}else if(table == Table.TICKET) {
@@ -178,9 +185,10 @@ public class GenericDAO {
 					Date reservationDate = rset.getDate("reservation_date");
 					Date saleDate = rset.getDate("sale_date");
 					User user = (User)getOne(Table.USER, rset.getInt("user_id"));
+					Boolean deleted = rset.getBoolean("deleted");
 					
 					objects.add(new Ticket(ticketId, departureFlight, arrivalFlight, departureFlightSeatNo, arrrivalFlightSeatNo, 
-							reservationDate, saleDate, user));
+							reservationDate, saleDate, user, deleted));
 					
 				}else {
 					return null;
@@ -212,18 +220,19 @@ public class GenericDAO {
 		try {
 			
 			if(table == Table.AIRPORT) {
-				query = "INSERT INTO Airport (name) VALUES (?)";
+				query = "INSERT INTO Airport (name, deleted) VALUES (?, ?)";
 				pstmt = conn.prepareStatement(query);
 				Airport paramObject = (Airport)object;
 				
 				pstmt.setString(1, paramObject.getName());
+				pstmt.setBoolean(2, paramObject.getDeleted());
 				
 				System.out.println(pstmt);
 				return pstmt.executeUpdate() == 1;
 				
 			}else if (table == Table.FLIGHT) {
-				query = "INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price)"
-						+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+				query = "INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)"
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 				pstmt = conn.prepareStatement(query);
 				Flight paramObject = (Flight)object;
 				
@@ -234,6 +243,7 @@ public class GenericDAO {
 				pstmt.setInt(5, paramObject.getFlyingTo().getId());
 				pstmt.setInt(6, paramObject.getNumberOfSeats());
 				pstmt.setDouble(7, paramObject.getPrice());
+				pstmt.setBoolean(8, paramObject.getDeleted());
 				
 				System.out.println(pstmt);
 				return pstmt.executeUpdate() == 1;
@@ -241,8 +251,8 @@ public class GenericDAO {
 				
 				
 			}else if (table == Table.USER) {
-				query = "INSERT INTO User(user_name, password, first_name, last_name, registration_date, role, blocked)"
-						+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+				query = "INSERT INTO User(user_name, password, first_name, last_name, registration_date, role, blocked, deleted)"
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 				pstmt = conn.prepareStatement(query);
 				User paramObject = (User)object;
 				
@@ -253,14 +263,15 @@ public class GenericDAO {
 				pstmt.setObject(5, paramObject.getRegistrationDate());
 				pstmt.setString(6, paramObject.getRole().toString());
 				pstmt.setBoolean(7, paramObject.getBlocked());
+				pstmt.setBoolean(8, paramObject.getDeleted());
 				
 				System.out.println(pstmt);
 				return pstmt.executeUpdate() == 1;
 				
 			}else if (table == Table.TICKET) {
 				
-				query = "INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id)"
-						+ "VALUES(?, ?, ?, ?, ?, ?, ?)";
+				query = "INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)"
+						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 				
 				pstmt = conn.prepareStatement(query);
 				Ticket paramObject = (Ticket)object;
@@ -272,6 +283,7 @@ public class GenericDAO {
 				pstmt.setObject(5, paramObject.getReservationDate());
 				pstmt.setObject(6, paramObject.getTicketSaleDate());
 				pstmt.setInt(7, paramObject.getUser().getId());
+				pstmt.setBoolean(8, paramObject.getDeleted());
 				
 				System.out.println(pstmt);
 				return pstmt.executeUpdate() == 1;
@@ -310,6 +322,7 @@ public class GenericDAO {
 				
 				query = "UPDATE Airport SET " +
 						"name = ? " + 
+						"deleted = ? " + 
 						
 						"WHERE airport_id = ?";
 				
@@ -318,8 +331,9 @@ public class GenericDAO {
 				Airport paramObject = (Airport)object;
 				
 				pstmt.setString(1, paramObject.getName());
+				pstmt.setBoolean(2, paramObject.getDeleted());
 				
-				pstmt.setInt(2, paramObject.getId());
+				pstmt.setInt(3, paramObject.getId());
 				
 				System.out.println(pstmt);
 				return pstmt.executeUpdate() == 1;
@@ -334,6 +348,7 @@ public class GenericDAO {
 						+ "arrival_airport_id = ? "
 						+ "no_of_seats = ? "
 						+ "price = ? "
+						+ "deleted = ? "
 						
 						+ "WHERE flight_id = ? ";
 				
@@ -347,8 +362,9 @@ public class GenericDAO {
 				pstmt.setInt(5, paramObject.getFlyingTo().getId());
 				pstmt.setInt(6, paramObject.getNumberOfSeats());
 				pstmt.setDouble(7, paramObject.getPrice());
+				pstmt.setBoolean(8, paramObject.getDeleted());
 				
-				pstmt.setInt(8, paramObject.getId());
+				pstmt.setInt(9, paramObject.getId());
 				
 				System.out.println(pstmt);
 				return pstmt.executeUpdate() == 1;
@@ -364,6 +380,7 @@ public class GenericDAO {
 						+ "registration_date = ? "
 						+ "role = ? "
 						+ "blocked = ? "
+						+ "deleted = ? "
 						
 						+ "WHERE user_id = ?";
 				
@@ -377,8 +394,9 @@ public class GenericDAO {
 				pstmt.setObject(5, paramObject.getRegistrationDate());
 				pstmt.setString(6, paramObject.getRole().toString());
 				pstmt.setBoolean(7, paramObject.getBlocked());
+				pstmt.setBoolean(8, paramObject.getDeleted());
 				
-				pstmt.setInt(8, paramObject.getId());
+				pstmt.setInt(9, paramObject.getId());
 				
 				System.out.println(pstmt);
 				return pstmt.executeUpdate() == 1;
@@ -394,6 +412,8 @@ public class GenericDAO {
 						+ "reservation_date = ? "
 						+ "sale_date = ? "
 						+ "user_id = ? "
+						+ "deleted = ? "
+						
 						
 						+ "WHERE ticket_id = ?";
 				
@@ -407,8 +427,9 @@ public class GenericDAO {
 				pstmt.setObject(5, paramObject.getReservationDate());
 				pstmt.setObject(6, paramObject.getTicketSaleDate());
 				pstmt.setInt(7, paramObject.getUser().getId());
+				pstmt.setBoolean(8, paramObject.getDeleted());
 				
-				pstmt.setInt(8, paramObject.getId());
+				pstmt.setInt(9, paramObject.getId());
 				
 				System.out.println(pstmt);
 				return pstmt.executeUpdate() == 1;
@@ -431,7 +452,48 @@ public class GenericDAO {
 	}
 	
 	
-	//delete
+
+	//Potrebno je administratorima prikazati komandu za brisanje leta. Ako let ima rezervacije i one bivaju obrisane.
+	//Ako let ima prodate karte, brisanje treba da bude samo logičko
+	//Samo rezervacija se može brisati. Potrebno je omogućiti brisanje rezervacije. Brisanje može da izvrši korisnik
+	//koji je napravio rezervaciju i administrator.
+	//Administratorima je potrebno omogućiti brisanje korisnika. Ako korisnik ima rezervacije i one bivaju obrisane.
+	//Ako korisnik ima prodate karte, brisanje treba da bude samo logičko (korisnik ne treba da se prikazuje u
+	//administratorovoj tabeli korisnika, ali mu se i dalje može pristupiti putem link-ova na stranicama prodatih
+	//karata).
+	
+	
+	//delete - only logical
+	
+	public static boolean delete(Table table, Object object) {
+		
+		if(table == Table.AIRPORT) {
+			Airport paramObject = (Airport)object;
+			paramObject.setDeleted(true);
+			return update(table, paramObject);
+			
+		}else if(table == Table.FLIGHT) {
+			Flight paramObject = (Flight)object;
+			paramObject.setDeleted(true);
+			return update(table, paramObject);
+			
+		}else if(table == Table.TICKET) {
+			Ticket paramObject = (Ticket)object;
+			paramObject.setDeleted(true);
+			return update(table, paramObject);
+			
+		}else if(table == Table.USER) {
+			
+			User paramObject = (User)object;
+			paramObject.setDeleted(true);
+			return update(table, paramObject);
+			
+		}else {
+			return false;
+		}
+	}
+	
+	
 	
 	
 	
