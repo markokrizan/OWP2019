@@ -1,18 +1,32 @@
 package airline.service;
 
+import java.util.ArrayList;
+
+import airline.dal.AirportDAO;
+import airline.model.Airport;
+
 public class AirportService {
 	
-	private static AirportService single_instance = null;
-	
-	private AirportService() {
-		
+	public static Airport getOne(Integer id) {
+		return AirportDAO.getOne(id);
 	}
 	
-	public static AirportService getInstance() {
-		if (single_instance == null) {
-			single_instance = new AirportService();
-		}
-		return single_instance;
+	public static ArrayList<Airport> getAll(){
+		return AirportDAO.getAll();
 	}
+	
+	public static boolean create(Airport airport) {
+		return AirportDAO.create(airport);
+	}
+	
+	public static boolean update(Airport airport) {
+		return AirportDAO.update(airport);
+	}
+	
+	public static boolean delete(Airport airport) {
+		return AirportDAO.delete(airport);
+	}
+	
+
 
 }

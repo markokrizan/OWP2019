@@ -464,7 +464,7 @@ public class GenericDAO {
 	
 	
 	//delete - only logical
-	
+	//redudandant a bit!
 	public static boolean delete(Table table, Object object) {
 		
 		if(table == Table.AIRPORT) {
