@@ -19,10 +19,6 @@ public class Airport {
 		this.deleted = deleted;
 	}
 
-	
-
-
-
 
 	public int getId() {
 		return id;

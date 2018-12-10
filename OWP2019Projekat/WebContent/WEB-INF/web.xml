@@ -4,7 +4,6 @@
   <welcome-file-list>
     <welcome-file>App</welcome-file>
   </welcome-file-list>
-
   <listener>
     <listener-class>airline.InitListener</listener-class>
   </listener>
@@ -18,7 +17,58 @@
     <servlet-name>App</servlet-name>
     <url-pattern>/App</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AirportController</display-name>
+    <servlet-name>AirportController</servlet-name>
+    <servlet-class>airline.controller.AirportController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AirportController</servlet-name>
+    <url-pattern>/airport</url-pattern>
+  </servlet-mapping>
+  
+  <servlet-mapping>
+    <servlet-name>AirportController</servlet-name>
+    <url-pattern>/airport/*</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <description></description>
+    <display-name>FlightController</display-name>
+    <servlet-name>FlightController</servlet-name>
+    <servlet-class>airline.controller.FlightController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FlightController</servlet-name>
+    <url-pattern>/flight</url-pattern>
+  </servlet-mapping>
+  
+  <!--  REST like URI's can be done like this: -->
+  <servlet-mapping>
+    <servlet-name>FlightController</servlet-name>
+    <url-pattern>/flight/*</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>TicketController</display-name>
+    <servlet-name>TicketController</servlet-name>
+    <servlet-class>airline.controller.TicketController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>TicketController</servlet-name>
+    <url-pattern>/ticket</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>UserController</display-name>
+    <servlet-name>UserController</servlet-name>
+    <servlet-class>airline.controller.UserController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserController</servlet-name>
+    <url-pattern>/user</url-pattern>
+  </servlet-mapping>
 </web-app>
-
 <!-- https://stackoverflow.com/questions/2437465/how-to-change-context-root-of-a-dynamic-web-project-in-eclipse -->
 <!-- https://coderanch.com/t/487496/java/set-Servlet-file-load-index -->
