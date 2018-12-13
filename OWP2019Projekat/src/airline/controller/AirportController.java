@@ -160,7 +160,6 @@ public class AirportController extends HttpServlet {
 		ObjectMapper mapper = new ObjectMapper();
 		AirportDTO airportDTO = mapper.readValue(reader, AirportDTO.class);
 		
-		System.out.println(airportDTO);
 		
 		Airport changedAirport;
 		
@@ -184,8 +183,44 @@ public class AirportController extends HttpServlet {
 	}
 
 	@Override
-	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-	
+	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		//Auth check -------------------
+		
+		
+		
+		
+		//------------------------------
+				
+		//Uri check --------------------
+				
+				
+				
+		//------------------------------
+		
+		
+		BufferedReader reader = request.getReader();
+		ObjectMapper mapper = new ObjectMapper();
+		AirportDTO airportDTO = mapper.readValue(reader, AirportDTO.class);
+		
+		Airport airportForDeletion;
+		
+		
+		airportForDeletion = AirportService.delete(Airport.AirportFromDTO(airportDTO));
+		if(airportForDeletion != null) {
+			String jsonData = mapper.writeValueAsString(new AirportDTO(airportForDeletion));
+			response.setContentType("application/json");
+			response.setStatus(201);
+			response.getWriter().write(jsonData);
+		}else {
+			MessageDTO message = new MessageDTO("error", "Error while deleting airport!");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);	
+		}
+		
+		
 	}
 
 	
