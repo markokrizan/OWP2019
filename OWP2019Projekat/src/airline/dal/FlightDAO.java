@@ -1,5 +1,6 @@
 package airline.dal;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,28 +30,46 @@ public class FlightDAO {
 		
 	}
 	
-	public static boolean create(Flight flight) {
+	public static Flight create(Flight flight) {
 		if(flight != null) {
-			return GenericDAO.insert(table, flight);
+			try {
+				return (Flight)GenericDAO.insert(table, flight);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 		
 	}
 	
-	public static boolean update(Flight flight) {
+	public static Flight update(Flight flight) {
 		if(flight != null) {
-			return GenericDAO.insert(table, flight);
+			try {
+				return (Flight)GenericDAO.insert(table, flight);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 	}
 	
-	public static boolean delete(Flight flight) {
+	public static Flight delete(Flight flight)  {
 		if(flight != null) {
-			return GenericDAO.delete(table, flight);
+			try {
+				return (Flight)GenericDAO.delete(table, flight);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 	}
 

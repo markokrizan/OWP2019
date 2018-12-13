@@ -1,5 +1,7 @@
 package airline.model;
 
+import airline.dto.AirportDTO;
+
 public class Airport {
 	
 	private int id;
@@ -17,6 +19,14 @@ public class Airport {
 		this.id = id;
 		this.name = name;
 		this.deleted = deleted;
+	}
+	
+	public static Airport AirportFromDTO(AirportDTO airportDTO) {
+		Airport newAirport = new Airport();
+		newAirport.setId(airportDTO.getId());
+		newAirport.setName(airportDTO.getName());
+		newAirport.setDeleted(false);
+		return newAirport;
 	}
 
 

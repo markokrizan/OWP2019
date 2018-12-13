@@ -4,6 +4,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import airline.dal.ConnectionManager;
+
 /**
  * Application Lifecycle Listener implementation class InitListener
  *
@@ -24,9 +26,7 @@ public class InitListener implements ServletContextListener {
 
 	public void contextInitialized(ServletContextEvent arg0) {
 		
-		Boolean connected = false;
-		ServletContext context = arg0.getServletContext();
-		context.setAttribute("connected", connected);
+		ConnectionManager.open("Airline", "root", "");
 		
 	}
 	

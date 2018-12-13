@@ -1,5 +1,6 @@
 package airline.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import airline.dal.AirportDAO;
@@ -15,15 +16,15 @@ public class AirportService {
 		return AirportDAO.getAll();
 	}
 	
-	public static boolean create(Airport airport) {
+	public static Airport create(Airport airport){
 		return AirportDAO.create(airport);
 	}
 	
-	public static boolean update(Airport airport) {
+	public static Airport update(Airport airport){
 		return AirportDAO.update(airport);
 	}
 	
-	public static boolean delete(Airport airport) {
+	public static Airport delete(Airport airport){
 		return AirportDAO.delete(airport);
 	}
 	

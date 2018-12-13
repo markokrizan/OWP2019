@@ -1,5 +1,6 @@
 package airline.service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import airline.dal.UserDAO;
@@ -15,15 +16,15 @@ public class UserService {
 		return UserDAO.getAll();
 	}
 	
-	public static boolean create(User user) {
+	public static User create(User user){
 		return UserDAO.create(user);
 	}
 	
-	public static boolean update(User user) {
+	public static User update(User user){
 		return UserDAO.update(user);
 	}
 	
-	public static boolean delete(User user) {
+	public static User delete(User user){
 		return UserDAO.delete(user);
 	}
 	

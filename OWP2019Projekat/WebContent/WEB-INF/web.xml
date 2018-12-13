@@ -27,12 +27,10 @@
     <servlet-name>AirportController</servlet-name>
     <url-pattern>/airport</url-pattern>
   </servlet-mapping>
-  
   <servlet-mapping>
     <servlet-name>AirportController</servlet-name>
     <url-pattern>/airport/*</url-pattern>
   </servlet-mapping>
-  
   <servlet>
     <description></description>
     <display-name>FlightController</display-name>
@@ -43,8 +41,6 @@
     <servlet-name>FlightController</servlet-name>
     <url-pattern>/flight</url-pattern>
   </servlet-mapping>
-  
-  <!--  REST like URI's can be done like this: -->
   <servlet-mapping>
     <servlet-name>FlightController</servlet-name>
     <url-pattern>/flight/*</url-pattern>
@@ -68,6 +64,16 @@
   <servlet-mapping>
     <servlet-name>UserController</servlet-name>
     <url-pattern>/user</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>SenderServlet</display-name>
+    <servlet-name>SenderServlet</servlet-name>
+    <servlet-class>airline.controller.SenderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>SenderServlet</servlet-name>
+    <url-pattern>/SenderServlet</url-pattern>
   </servlet-mapping>
 </web-app>
 <!-- https://stackoverflow.com/questions/2437465/how-to-change-context-root-of-a-dynamic-web-project-in-eclipse -->

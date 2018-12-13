@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.mysql.jdbc.Statement;
+
 import airline.model.Airport;
 import airline.model.Flight;
 import airline.model.Ticket;
@@ -42,6 +44,18 @@ public class GenericDAO {
 		}
 	}
 	
+	private static Integer getGeneratedId(PreparedStatement pstmt) throws SQLException {
+		ResultSet returnedKeys = pstmt.getGeneratedKeys();
+		if(returnedKeys.next()) {
+			Integer generatedId = returnedKeys.getInt(1);
+			return generatedId;
+			
+		}else {
+			return null;
+		}
+		
+	}
+	
 	
 	
 	public static Object getOne(Table table, Integer id){
@@ -50,10 +64,12 @@ public class GenericDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
+		System.out.println(conn);
+		
 		String idName = idHelper(table);
 		
 		try {
-			String query = "SELECT * FROM " + table.toString() + " WHERE" + idName + "=? AND deleted = 0";
+			String query = "SELECT * FROM " + table.toString() + " WHERE " + idName + "=? AND deleted = 0";
 	
 
 			pstmt = conn.prepareStatement(query);
@@ -135,6 +151,8 @@ public class GenericDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
+		System.out.println(conn);
+		
 		try {
 			String query = "SELECT * FROM " + table.toString() + " WHERE deleted = 0";
 
@@ -209,7 +227,7 @@ public class GenericDAO {
 	
 	//add
 	
-	public static boolean insert(Table table, Object object) {
+	public static Object insert(Table table, Object object) throws SQLException {
 		
 		Connection conn = ConnectionManager.getConnection();
 
@@ -221,19 +239,28 @@ public class GenericDAO {
 			
 			if(table == Table.AIRPORT) {
 				query = "INSERT INTO Airport (name, deleted) VALUES (?, ?)";
-				pstmt = conn.prepareStatement(query);
+				pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 				Airport paramObject = (Airport)object;
 				
 				pstmt.setString(1, paramObject.getName());
 				pstmt.setBoolean(2, paramObject.getDeleted());
 				
 				System.out.println(pstmt);
-				return pstmt.executeUpdate() == 1;
+				pstmt.executeUpdate();
+				
+				Airport airport = (Airport)object;
+				airport.setId(getGeneratedId(pstmt));
+				
+				return object;
+				
+				
+				
+				
 				
 			}else if (table == Table.FLIGHT) {
 				query = "INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)"
 						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-				pstmt = conn.prepareStatement(query);
+				pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 				Flight paramObject = (Flight)object;
 				
 				pstmt.setString(1, paramObject.getNumber());
@@ -245,15 +272,20 @@ public class GenericDAO {
 				pstmt.setDouble(7, paramObject.getPrice());
 				pstmt.setBoolean(8, paramObject.getDeleted());
 				
-				System.out.println(pstmt);
-				return pstmt.executeUpdate() == 1;
+				
+				pstmt.executeUpdate();
+				
+				Flight flight = (Flight)object;
+				flight.setId(getGeneratedId(pstmt));
+				
+				return object;
 				
 				
 				
 			}else if (table == Table.USER) {
 				query = "INSERT INTO User(user_name, password, first_name, last_name, registration_date, role, blocked, deleted)"
 						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
-				pstmt = conn.prepareStatement(query);
+				pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 				User paramObject = (User)object;
 				
 				pstmt.setString(1, paramObject.getUserName());
@@ -265,15 +297,19 @@ public class GenericDAO {
 				pstmt.setBoolean(7, paramObject.getBlocked());
 				pstmt.setBoolean(8, paramObject.getDeleted());
 				
-				System.out.println(pstmt);
-				return pstmt.executeUpdate() == 1;
+				pstmt.executeUpdate();
+				
+				User user = (User)object;
+				user.setId(getGeneratedId(pstmt));
+				
+				return object;
 				
 			}else if (table == Table.TICKET) {
 				
 				query = "INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)"
 						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 				
-				pstmt = conn.prepareStatement(query);
+				pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 				Ticket paramObject = (Ticket)object;
 				
 				pstmt.setInt(1, paramObject.getDepartureFlight().getId());
@@ -285,29 +321,34 @@ public class GenericDAO {
 				pstmt.setInt(7, paramObject.getUser().getId());
 				pstmt.setBoolean(8, paramObject.getDeleted());
 				
-				System.out.println(pstmt);
-				return pstmt.executeUpdate() == 1;
+				pstmt.executeUpdate();
+				
+				Ticket ticket = (Ticket)object;
+				ticket.setId(getGeneratedId(pstmt));
+				
+				return object;
 				
 				
 			}else {
-				return false;
+				return null;
 			}
 			
 		} catch (SQLException ex) {
 			System.out.println("Greska u SQL upitu!");
-			ex.printStackTrace();
+			//ex.printStackTrace();
+			throw new SQLException(ex);
 		} finally {
 			// zatvaranje naredbe i rezultata
 			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
 		}
-		return false;
+	
 		
 	}
 	
 	
 	
 	//update
-	public static boolean update(Table table, Object object) {
+	public static Object update(Table table, Object object) throws SQLException {
 		
 		Connection conn = ConnectionManager.getConnection();
 		PreparedStatement pstmt = null;
@@ -321,7 +362,7 @@ public class GenericDAO {
 			if(table == Table.AIRPORT) {
 				
 				query = "UPDATE Airport SET " +
-						"name = ? " + 
+						"name = ?, " + 
 						"deleted = ? " + 
 						
 						"WHERE airport_id = ?";
@@ -336,18 +377,20 @@ public class GenericDAO {
 				pstmt.setInt(3, paramObject.getId());
 				
 				System.out.println(pstmt);
-				return pstmt.executeUpdate() == 1;
+				pstmt.executeUpdate();
+				
+				return object;
 			
 				
 			}else if (table == Table.FLIGHT) {
 				query = "UPDATE Flight SET "
-						+ "number = ? "
-						+ "departure_date = ? "
-						+ "arrival_date = ? "
-						+ "departure_airport_id = ? "
-						+ "arrival_airport_id = ? "
-						+ "no_of_seats = ? "
-						+ "price = ? "
+						+ "number = ?, "
+						+ "departure_date = ?, "
+						+ "arrival_date = ?, "
+						+ "departure_airport_id = ?, "
+						+ "arrival_airport_id = ?, "
+						+ "no_of_seats = ?, "
+						+ "price = ?, "
 						+ "deleted = ? "
 						
 						+ "WHERE flight_id = ? ";
@@ -367,19 +410,21 @@ public class GenericDAO {
 				pstmt.setInt(9, paramObject.getId());
 				
 				System.out.println(pstmt);
-				return pstmt.executeUpdate() == 1;
+				pstmt.executeUpdate();
+				
+				return object;
 				
 				
 			
 			}else if (table == Table.USER) {
 				query = "UPDATE User SET "
-						+ "user_name = ? "
-						+ "password = ? "
-						+ "first_name = ? "
-						+ "last_name = ? "
-						+ "registration_date = ? "
-						+ "role = ? "
-						+ "blocked = ? "
+						+ "user_name = ?, "
+						+ "password = ?, "
+						+ "first_name = ?, "
+						+ "last_name = ?, "
+						+ "registration_date = ?, "
+						+ "role = ?, "
+						+ "blocked = ?, "
 						+ "deleted = ? "
 						
 						+ "WHERE user_id = ?";
@@ -399,19 +444,21 @@ public class GenericDAO {
 				pstmt.setInt(9, paramObject.getId());
 				
 				System.out.println(pstmt);
-				return pstmt.executeUpdate() == 1;
+				pstmt.executeUpdate();
+				
+				return object;
 		
 				
 			}else if (table == Table.TICKET) {
 				
 				query = "UPDATE Ticket SET "
-						+ "departure_flight_id = ? "
-						+ "arrival_flight_id = ? "
-						+ "departure_flight_seat_no = ?"
-						+ "arrival_flight_seat_no = ?"
-						+ "reservation_date = ? "
-						+ "sale_date = ? "
-						+ "user_id = ? "
+						+ "departure_flight_id = ?, "
+						+ "arrival_flight_id = ?, "
+						+ "departure_flight_seat_no = ?, "
+						+ "arrival_flight_seat_no = ?, "
+						+ "reservation_date = ?, "
+						+ "sale_date = ?, "
+						+ "user_id = ?, "
 						+ "deleted = ? "
 						
 						
@@ -432,23 +479,26 @@ public class GenericDAO {
 				pstmt.setInt(9, paramObject.getId());
 				
 				System.out.println(pstmt);
-				return pstmt.executeUpdate() == 1;
+				pstmt.executeUpdate();
+				
+				return object;
 				
 				
 				
 			}else {
-				return false;
+				return null;
 			}
 		
 		} catch (SQLException ex) {
 			System.out.println("Greska u SQL upitu!");
 			ex.printStackTrace();
+			throw new SQLException(ex);
 		} finally {
 			// zatvaranje naredbe i rezultata
 			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
 		}
 
-		return false;
+		
 	}
 	
 	
@@ -465,7 +515,7 @@ public class GenericDAO {
 	
 	//delete - only logical
 	//redudandant a bit!
-	public static boolean delete(Table table, Object object) {
+	public static Object delete(Table table, Object object) throws SQLException {
 		
 		if(table == Table.AIRPORT) {
 			Airport paramObject = (Airport)object;

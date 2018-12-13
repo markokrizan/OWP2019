@@ -1,10 +1,21 @@
 package airline.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import airline.dto.AirportDTO;
+import airline.dto.MessageDTO;
+import airline.model.Airport;
+import airline.service.AirportService;
 
 /**
  * Servlet implementation class AirportController
@@ -12,47 +23,172 @@ import javax.servlet.http.HttpServletResponse;
 public class AirportController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public AirportController() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+ 
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//Auth check:
 		
+		//forward za authentication check
+		//forward za authorization check
+		
+		
+		//----------------------
+		
+		//URI check:
 		String uri = request.getRequestURI();
-		response.getWriter().append("URI IS:  ").append(uri);
-		Integer collectionIdIndex = uri.lastIndexOf('/');
-		String collectionId = uri.substring(collectionIdIndex + 1, uri.length());
-		response.getWriter().append("URI IS:  ").append("<br/>" + collectionId);
+		Integer lastSlashIndex = uri.lastIndexOf('/');
+		String lastUriPart = uri.substring(lastSlashIndex + 1, uri.length());
+
+		
+		try {
+			Integer id = Integer.parseInt(lastUriPart);
+			doGetOne(id, request, response);
+			return;
+		}catch (NumberFormatException e) {
+			if(lastUriPart.equals("airport")){
+				doGetAll(request, response);
+				return;
+			}else {
+				MessageDTO message = new MessageDTO("error", e.getMessage());
+				ObjectMapper mapper = new ObjectMapper();
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json");
+				response.getWriter().write(jsonData);	
+				return;
+			}
+		
+		}
+		
+		//------------------------------------------------
+		
+		
+		
 		
 		
 	}
+	
+	protected void doGetOne(Integer id, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		Airport airport = AirportService.getOne(id);
+		if(airport != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(new AirportDTO(airport));
+			response.setContentType("application/json");
+			response.setStatus(200);
+			response.getWriter().write(jsonData);	
+		}else {
+			MessageDTO message = new MessageDTO("error", "No such id!");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(200);
+			response.getWriter().write(jsonData);	
+		}
+	}
+	
+	protected void doGetAll(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		ArrayList<Airport> airports = AirportService.getAll();
+		if(airports != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(AirportDTO.toDTO(airports));
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}else {
+			MessageDTO message = new MessageDTO("error", "Error while getting airports!");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}
+	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		//Auth check -------------------
+		
+		
+		
+		
+		//------------------------------
+		
+		//Uri check --------------------
+		
+		
+		
+		//------------------------------
+		
+		BufferedReader reader = request.getReader();
+		ObjectMapper mapper = new ObjectMapper();
+		AirportDTO airportDTO = mapper.readValue(reader, AirportDTO.class);
+		Airport insertedAirport;
+
+		insertedAirport = AirportService.create(Airport.AirportFromDTO(airportDTO));
+		if(insertedAirport != null) {
+			String jsonData = mapper.writeValueAsString(new AirportDTO(insertedAirport));
+			response.setContentType("application/json");
+			response.setStatus(201);
+			response.getWriter().write(jsonData);
+		}else {
+			MessageDTO message = new MessageDTO("error", "Error while storing airport!");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);	
+		}
+	
+		
+		
+		
+		
+	}
+	
+	@Override
+	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		//Auth check -------------------
+		
+		
+		
+		
+		//------------------------------
+				
+		//Uri check --------------------
+				
+				
+				
+		//------------------------------
+		
+		BufferedReader reader = request.getReader();
+		ObjectMapper mapper = new ObjectMapper();
+		AirportDTO airportDTO = mapper.readValue(reader, AirportDTO.class);
+		
+		System.out.println(airportDTO);
+		
+		Airport changedAirport;
+		
+	
+		changedAirport = AirportService.update(Airport.AirportFromDTO(airportDTO));
+		if(changedAirport != null) {
+			String jsonData = mapper.writeValueAsString(new AirportDTO(changedAirport));
+			response.setContentType("application/json");
+			response.setStatus(201);
+			response.getWriter().write(jsonData);
+		}else {
+			MessageDTO message = new MessageDTO("error", "Error while changing airport!");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);	
+		}
+	
+	
+	
 	}
 
 	@Override
 	protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doDelete(req, resp);
+	
 	}
 
-	@Override
-	protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		super.doPut(req, resp);
-	}
+	
 	
 	
 

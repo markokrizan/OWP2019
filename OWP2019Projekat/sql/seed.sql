@@ -11,13 +11,13 @@ use Airline;
 
 #p123
 INSERT INTO User(user_name, password, first_name, last_name, registration_date, role, blocked, deleted)
-	VALUES('pekip', '46bf36a7193438f81fccc9c4bcc8343e', 'Petar', 'PetroviÄ‡', '2018-12-03', 'ADMIN', 0, 0);
+	VALUES('pekip', '46bf36a7193438f81fccc9c4bcc8343e', 'Petar', 'Petrović', '2018-12-03', 'ADMIN', 0, 0);
 #s456
 INSERT INTO User(user_name, password, first_name, last_name, registration_date, role, blocked, deleted)
-	VALUES('savas', '10f96fb0511f1cc86e10d4d7fe024a03', 'Sava', 'SavanoviÄ‡', '2018-12-04', 'REGULAR', 0, 0);
+	VALUES('savas', '10f96fb0511f1cc86e10d4d7fe024a03', 'Sava', 'Savanović', '2018-12-04', 'REGULAR', 0, 0);
 #m789
 INSERT INTO User(user_name, password, first_name, last_name, registration_date, role, blocked, deleted)
-	VALUES('mitarm', 'bee55b534c4f3d9204a4d0ee271a9440', 'Mitar', 'MiriÄ‡', '2018-12-05', 'REGULAR', 0, 0);
+	VALUES('mitarm', 'bee55b534c4f3d9204a4d0ee271a9440', 'Mitar', 'Mirić', '2018-12-05', 'REGULAR', 0, 0);
 
 
 #Airline:

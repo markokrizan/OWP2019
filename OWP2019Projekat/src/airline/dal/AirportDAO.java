@@ -1,5 +1,6 @@
 package airline.dal;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,39 +24,49 @@ public class AirportDAO {
 
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Airport> getAll(){
-		//hacky:
 		return (ArrayList<Airport>)(List<?>)GenericDAO.getAll(table);
-		//slow and redundant:
-//		ArrayList<Airport> airports = new ArrayList<Airport>();
-//		for(Object o : GenericDAO.getAll(table)) {
-//			airports.add((Airport)o);
-//		}
-//		return airports;
+
 		
 	}
 	
-	public static boolean create(Airport airport) {
+	public static Airport create(Airport airport){
 		if(airport != null) {
-			return GenericDAO.insert(table, airport);
+			try {
+				return (Airport)GenericDAO.insert(table, airport);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 		
 	}
 	
-	public static boolean update(Airport airport) {
+	public static Airport update(Airport airport){
 		if(airport != null) {
-			return GenericDAO.insert(table, airport);
+			try {
+				return (Airport)GenericDAO.update(table, airport);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 	}
 	
-	public static boolean delete(Airport airport) {
+	public static Airport delete(Airport airport){
 		if(airport != null) {
-			return GenericDAO.delete(table, airport);
+			try {
+				return (Airport)GenericDAO.delete(table, airport);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 	}
 	

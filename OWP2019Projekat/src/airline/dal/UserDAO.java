@@ -1,5 +1,6 @@
 package airline.dal;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,28 +27,46 @@ private static final Table table = Table.USER;
 
 	}
 	
-	public static boolean create(User user) {
+	public static User create(User user){
 		if(user != null) {
-			return GenericDAO.insert(table, user);
+			try {
+				return (User)GenericDAO.insert(table, user);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 		
 	}
 	
-	public static boolean update(User user) {
+	public static User update(User user){
 		if(user != null) {
-			return GenericDAO.insert(table, user);
+			try {
+				return (User)GenericDAO.insert(table, user);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 	}
 	
-	public static boolean delete(User user) {
+	public static User delete(User user){
 		if(user != null) {
-			return GenericDAO.delete(table, user);
+			try {
+				return (User)GenericDAO.delete(table, user);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return null;
+			}
 		}else {
-			return false;
+			return null;
 		}
 	}
 
