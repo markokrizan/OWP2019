@@ -26,7 +26,7 @@ public class FlightDTO {
 	
 	
 	
-	public FlightDTO(Integer id, String number, Date departure, Date arrival, AirportDTO flyingFrom,
+	private FlightDTO(Integer id, String number, Date departure, Date arrival, AirportDTO flyingFrom,
 			AirportDTO flyingTo, Integer numberOfSeats, Double price) {
 		super();
 		this.id = id;
@@ -39,9 +39,17 @@ public class FlightDTO {
 		this.price = price;
 	}
 	
-	public FlightDTO(Flight flight) {
+	private FlightDTO(Flight flight) {
+		//dozvoli parametar null
 		this(flight.getId(), flight.getNumber(), flight.getDeparture(), flight.getArrival(), new AirportDTO(flight.getFlyingFrom()), new AirportDTO(flight.getFlyingTo()), 
 				flight.getNumberOfSeats(), flight.getPrice());
+	}
+	
+	public static FlightDTO FlightDTOFactory(Flight flight)  {
+		if(flight == null) {
+			return null;
+		}
+		return new FlightDTO(flight);
 	}
 	
 	public static ArrayList<FlightDTO> toDTO(ArrayList<Flight> flights){

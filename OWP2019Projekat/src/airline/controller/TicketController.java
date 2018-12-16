@@ -88,6 +88,7 @@ public class TicketController extends HttpServlet {
 	
 	protected void doGetAll(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ArrayList<Ticket> tickets = TicketService.getAll();
+		System.out.println(tickets);
 		if(tickets != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(TicketDTO.toDTO(tickets));

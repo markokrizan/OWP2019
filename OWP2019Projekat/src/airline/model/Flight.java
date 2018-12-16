@@ -113,6 +113,17 @@ public class Flight {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
+
+
+
+
+
+	@Override
+	public String toString() {
+		return "Flight [id=" + id + ", number=" + number + ", departure=" + departure + ", arrival=" + arrival
+				+ ", flyingFrom=" + flyingFrom + ", flyingTo=" + flyingTo + ", numberOfSeats=" + numberOfSeats
+				+ ", price=" + price + ", deleted=" + deleted + "]";
+	}
 	
 	
 	

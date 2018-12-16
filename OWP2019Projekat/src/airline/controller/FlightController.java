@@ -66,7 +66,7 @@ public class FlightController extends HttpServlet {
 		Flight flight = FlightService.getOne(id);
 		if(flight != null) {
 			ObjectMapper mapper = new ObjectMapper();
-			String jsonData = mapper.writeValueAsString(new FlightDTO(flight));
+			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(flight));
 			response.setContentType("application/json");
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
@@ -121,7 +121,7 @@ public class FlightController extends HttpServlet {
 
 		insertedFlight = FlightService.create(Flight.flightFromDTO(flightDTO));
 		if(insertedFlight != null) {
-			String jsonData = mapper.writeValueAsString(new FlightDTO(insertedFlight));
+			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(insertedFlight));
 			response.setContentType("application/json");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
@@ -164,7 +164,7 @@ public class FlightController extends HttpServlet {
 	
 		changedFlight = FlightService.update(Flight.flightFromDTO(flightDTO));
 		if(changedFlight != null) {
-			String jsonData = mapper.writeValueAsString(new FlightDTO(changedFlight));
+			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(changedFlight));
 			response.setContentType("application/json");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
@@ -203,7 +203,7 @@ public class FlightController extends HttpServlet {
 		
 		flightForDeletion = FlightService.delete(Flight.flightFromDTO(flightDTO));
 		if(flightForDeletion != null) {
-			String jsonData = mapper.writeValueAsString(new FlightDTO(flightForDeletion));
+			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(flightForDeletion));
 			response.setContentType("application/json");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);

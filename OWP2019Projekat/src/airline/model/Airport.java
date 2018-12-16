@@ -57,6 +57,12 @@ public class Airport {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
+
+
+	@Override
+	public String toString() {
+		return "Airport [id=" + id + ", name=" + name + ", deleted=" + deleted + "]";
+	}
 	
 	
 	

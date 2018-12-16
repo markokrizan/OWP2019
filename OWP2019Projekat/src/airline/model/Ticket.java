@@ -126,6 +126,14 @@ public class Ticket {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
+
+	@Override
+	public String toString() {
+		return "Ticket [id=" + id + ", departureFlight=" + departureFlight + ", arrivalFlight=" + arrivalFlight
+				+ ", departureFlightSeatNumber=" + departureFlightSeatNumber + ", arrivalFlightSeatNumber="
+				+ arrivalFlightSeatNumber + ", reservationDate=" + reservationDate + ", ticketSaleDate="
+				+ ticketSaleDate + ", user=" + user + ", deleted=" + deleted + "]\n";
+	}
 	
 	
 	

@@ -40,7 +40,7 @@ public class TicketDTO {
 	}
 	
 	public TicketDTO(Ticket ticket) {
-		this(ticket.getId(), new FlightDTO(ticket.getDepartureFlight()), new FlightDTO(ticket.getArrivalFlight()), ticket.getDepartureFlightSeatNumber(), ticket.getArrivalFlightSeatNumber(),
+		this(ticket.getId(), FlightDTO.FlightDTOFactory(ticket.getDepartureFlight()), FlightDTO.FlightDTOFactory(ticket.getArrivalFlight()), ticket.getDepartureFlightSeatNumber(), ticket.getArrivalFlightSeatNumber(),
 				ticket.getReservationDate(), ticket.getTicketSaleDate(), new UserDTO(ticket.getUser()));
 	}
 	
@@ -114,6 +114,15 @@ public class TicketDTO {
 	}
 	public void setUser(UserDTO user) {
 		this.user = user;
+	}
+
+
+	@Override
+	public String toString() {
+		return "TicketDTO [id=" + id + ", departureFlight=" + departureFlight + ", arrivalFlight=" + arrivalFlight
+				+ ", departureFlightSeatNumber=" + departureFlightSeatNumber + ", arrivalFlightSeatNumber="
+				+ arrivalFlightSeatNumber + ", reservationDate=" + reservationDate + ", ticketSaleDate="
+				+ ticketSaleDate + ", user=" + user + "]";
 	}
 	
 	

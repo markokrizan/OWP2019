@@ -27,6 +27,11 @@ public class MessageDTO implements Serializable {
 	public void setTrace(String trace) {
 		this.trace = trace;
 	}
+
+	@Override
+	public String toString() {
+		return "MessageDTO [status=" + status + ", trace=" + trace + "]";
+	}
 	
 	
 	

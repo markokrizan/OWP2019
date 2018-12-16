@@ -63,7 +63,7 @@ public class UserController extends HttpServlet {
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
 		}else {
-			MessageDTO message = new MessageDTO("error", "user_id");
+			MessageDTO message = new MessageDTO("error", "invalid_user_id");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
