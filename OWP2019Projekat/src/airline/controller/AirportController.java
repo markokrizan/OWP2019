@@ -34,7 +34,6 @@ public class AirportController extends HttpServlet {
 		
 		//for example only admin can use this method
 		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
-		System.out.println(status);
 		if(status != AuthStatus.AUTHORIZED) {
 			ObjectMapper mapper = new ObjectMapper();
 			MessageDTO message = new MessageDTO("error", "unauthrorized");
@@ -75,8 +74,7 @@ public class AirportController extends HttpServlet {
 		
 		//------------------------------------------------
 		
-		
-		
+
 		
 		
 	}

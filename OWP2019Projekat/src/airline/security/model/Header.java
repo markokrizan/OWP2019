@@ -14,6 +14,13 @@ public class Header {
 	public String getType() {
 		return type;
 	}
+
+	@Override
+	public String toString() {
+		return "Header [algoritm=" + algoritm + ", type=" + type + "]";
+	}
+	
+	
 	
 	
 

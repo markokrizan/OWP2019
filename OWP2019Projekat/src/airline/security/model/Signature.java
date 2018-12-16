@@ -35,6 +35,15 @@ public class Signature {
 	public String getEncodedSecret() {
 		return encodedSecret;
 	}
+
+	@Override
+	public String toString() {
+		return "Signature [encodedHeader=" + encodedHeader + ", encodedPayload=" + encodedPayload + ", encodedSecret="
+				+ encodedSecret + "]";
+	}
+	
+	
+	
 	
 	
 

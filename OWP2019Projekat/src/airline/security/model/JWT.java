@@ -6,6 +6,10 @@ public class JWT {
 	private Payload payload;
 	private Signature signature;
 	
+	public JWT() {
+		
+	}
+	
 	
 	public JWT(Header header, Payload payload, Signature signature) {
 		super();
@@ -43,6 +47,14 @@ public class JWT {
 	public void setSignature(Signature signature) {
 		this.signature = signature;
 	}
+
+
+	@Override
+	public String toString() {
+		return "JWT [header=" + header + ", payload=" + payload + ", signature=" + signature + "]";
+	}
+	
+	
 	
 	
 	

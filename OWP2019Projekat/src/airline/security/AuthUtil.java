@@ -23,6 +23,7 @@ public class AuthUtil {
 	
 	
 	public static String generateToken(User user) {
+		System.out.println(user);
 		
 		Header header = new Header();
 		Payload payload = new Payload(user.getId(), user.getUserName(), user.getFirstName(), user.getLastName(), user.getRole());
@@ -38,52 +39,60 @@ public class AuthUtil {
 	}
 	
 	public static boolean verifyToken(String string) {
+		if(string == null) {
+			return false;
+		}
 		String[] parts = string.split("\\.");
+		
+		if(parts.length != 3) {
+			return false;
+		}
+		
+		
 		String headerJSON = base64Decode(parts[0]);
+		String payloadJSON = base64Decode(parts[1]);
+		String sendersSignatureJSON = base64Decode(parts[2]);
+		
+		if(headerJSON == null || payloadJSON == null || sendersSignatureJSON == null) {
+			return false;
+		}
+		
+		
+		String sendersSignature = sendersSignatureJSON.substring(1, sendersSignatureJSON.length()-1); //"sdfsdfsdfsdfsdfsdfsdf" - trim double quotes from JSON
+		
 		
 		ObjectMapper mapper = new ObjectMapper();
 		Header header = null;
+		Payload payload = null;
+
 		try {
 			header = mapper.readValue(headerJSON, Header.class);
+			payload = mapper.readValue(payloadJSON, Payload.class);
+		
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
-		String payloadJSON = base64Decode(parts[1]);
-		String sendersSignatureJSON = base64Decode(parts[2]);
+		//construct signature from header and payload:
+		Signature newSignature = new Signature(header, payload, serverSecret);
+		JWT newJWT = new JWT(header, payload, newSignature);
+		String serversSignature = sign(newJWT);
 		
-		String serversSignature = hash(headerJSON + payloadJSON + serverSecret, header.getAlgoritm());
-		
-		
-		
-		
-		
-		//Check here:
-		
-		
-		
-		
-		
-		
-		System.out.println(serversSignature);
-		System.out.println(sendersSignatureJSON);
+//		System.out.println(headerJSON);
+//		System.out.println(payloadJSON);
+//		System.out.println(sendersSignatureJSON);
+//		System.out.println(sendersSignature);
+//		System.out.println(newSignature);
+//		System.out.println(newJWT);
+//
+//		
+//		System.out.println("Final comparison:");
+//		System.out.println(serversSignature);
+//		System.out.println(sendersSignature);
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		if(serversSignature.equals(sendersSignatureJSON)) {
+		if(serversSignature.equals(sendersSignature)) {
 			return true;
 		} else {
 			return false;
@@ -93,7 +102,7 @@ public class AuthUtil {
 	
 	public static User getUserFromToken(String token) {
 		ObjectMapper mapper = new ObjectMapper();
-		String payloadJSON = base64Decode(token.split(".")[1]);
+		String payloadJSON = base64Decode(token.split("\\.")[1]);
 		Payload payload = null;
 		try {
 			payload = mapper.readValue(payloadJSON, Payload.class);
@@ -118,7 +127,7 @@ public class AuthUtil {
 	
 	//authentication controller turned into a method:
 	public static AuthStatus authorizeToken(String token, Role role) {
-		if(token == null) {
+		if(token == null || token.equals("")) {
 			//token not present:
 			return AuthStatus.UNAUTHENTICATED;
 		}else {
@@ -152,7 +161,7 @@ public class AuthUtil {
 		try {
 			jsonHeader = mapper.writeValueAsString(header);
 			jsonPayload = mapper.writeValueAsString(payload);
-			jsonSignedSignature = mapper.writeValueAsString(header);
+			jsonSignedSignature = mapper.writeValueAsString(signedSignature);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -217,8 +226,16 @@ public class AuthUtil {
 	}
 	
 	public static String base64Decode(String string) {
-		byte[] decodedBytes = Base64.getDecoder().decode(string.getBytes());
-		return new String(decodedBytes, StandardCharsets.UTF_8);
+		try {
+			byte[] decodedBytes = Base64.getDecoder().decode(string.getBytes());
+			return new String(decodedBytes, StandardCharsets.UTF_8);
+		} catch(IllegalArgumentException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+//		byte[] decodedBytes = Base64.getDecoder().decode(string.getBytes());
+//		return new String(decodedBytes, StandardCharsets.UTF_8);
 	}
 	
 	
