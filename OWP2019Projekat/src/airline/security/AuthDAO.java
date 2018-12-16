@@ -28,12 +28,12 @@ public class AuthDAO {
 			
 			
 			try {
-				String query = "SELECT * FROM user WHERE user_name LIKE '?' AND deleted = 0";
+				String query = "SELECT * FROM user WHERE user_name LIKE ? AND deleted = 0";
 	
 				pstmt = conn.prepareStatement(query);
 				
-				int index = 1;
-				pstmt.setString(index++, username);
+				
+				pstmt.setString(1, username);
 				System.out.println(pstmt);
 	
 				rset = pstmt.executeQuery();
@@ -48,6 +48,9 @@ public class AuthDAO {
 					Role role = Role.valueOf(rset.getString("role"));
 					Boolean blocked = rset.getBoolean("blocked");
 					Boolean deleted = rset.getBoolean("deleted");
+					
+				
+					
 					return new User(userId, userName, password, firstName, lastName, registrationDate, role, blocked, deleted);
 				}else {
 					return null;

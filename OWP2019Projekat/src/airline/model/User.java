@@ -29,6 +29,8 @@ public class User {
 		this.id = id;
 		this.userName = userName;
 		this.password = password;
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.registrationDate = registrationDate;
 		this.role = role;
 		this.blocked = blocked;
@@ -126,6 +128,16 @@ public class User {
 	public void setDeleted(Boolean deleted) {
 		this.deleted = deleted;
 	}
+
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", userName=" + userName + ", password=" + password + ", firstName=" + firstName
+				+ ", lastName=" + lastName + ", registrationDate=" + registrationDate + ", role=" + role + ", blocked="
+				+ blocked + ", deleted=" + deleted + "]";
+	}
+	
+	
 	
 	
 	

@@ -75,6 +75,17 @@
     <servlet-name>SenderServlet</servlet-name>
     <url-pattern>/SenderServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>AuthController</display-name>
+    <servlet-name>AuthController</servlet-name>
+    <servlet-class>airline.controller.AuthController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AuthController</servlet-name>
+    <url-pattern>/login</url-pattern>
+  </servlet-mapping>
+
 </web-app>
 <!-- https://stackoverflow.com/questions/2437465/how-to-change-context-root-of-a-dynamic-web-project-in-eclipse -->
 <!-- https://coderanch.com/t/487496/java/set-Servlet-file-load-index -->

@@ -2,7 +2,6 @@ package airline.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -15,6 +14,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import airline.dto.AirportDTO;
 import airline.dto.MessageDTO;
 import airline.model.Airport;
+import airline.model.User;
+import airline.model.User.Role;
+import airline.security.AuthUtil;
+import airline.security.AuthUtil.AuthStatus;
 import airline.service.AirportService;
 
 /**
@@ -27,11 +30,22 @@ public class AirportController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//Auth check:
+		String token = request.getHeader("Authorization");
 		
-		//forward za authentication check
-		//forward za authorization check
+		//for example only admin can use this method
+		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
+		System.out.println(status);
+		if(status != AuthStatus.AUTHORIZED) {
+			ObjectMapper mapper = new ObjectMapper();
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
 		
-		
+
 		//----------------------
 		
 		//URI check:
@@ -76,7 +90,7 @@ public class AirportController extends HttpServlet {
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
 		}else {
-			MessageDTO message = new MessageDTO("error", "No such id!");
+			MessageDTO message = new MessageDTO("error", "invalid_airport_id");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
@@ -93,7 +107,7 @@ public class AirportController extends HttpServlet {
 			response.setContentType("application/json");
 			response.getWriter().write(jsonData);	
 		}else {
-			MessageDTO message = new MessageDTO("error", "Error while getting airports!");
+			MessageDTO message = new MessageDTO("error", "processing_error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
@@ -128,7 +142,7 @@ public class AirportController extends HttpServlet {
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
-			MessageDTO message = new MessageDTO("error", "Error while storing airport!");
+			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
 			response.setStatus(400);
@@ -171,7 +185,7 @@ public class AirportController extends HttpServlet {
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
-			MessageDTO message = new MessageDTO("error", "Error while changing airport!");
+			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
 			response.setStatus(400);
@@ -213,7 +227,7 @@ public class AirportController extends HttpServlet {
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
-			MessageDTO message = new MessageDTO("error", "Error while deleting airport!");
+			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
 			response.setStatus(400);
