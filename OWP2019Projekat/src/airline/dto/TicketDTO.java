@@ -1,32 +1,33 @@
-package airline.model;
+package airline.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 
-import airline.dto.AirportDTO;
-import airline.dto.TicketDTO;
+import airline.model.Flight;
+import airline.model.Ticket;
+import airline.model.User;
 
-public class Ticket {
-
+public class TicketDTO {
 	
 	private Integer id;
-	private Flight departureFlight;
-	private Flight arrivalFlight;
+	private FlightDTO departureFlight;
+	private FlightDTO arrivalFlight;
 	private Integer departureFlightSeatNumber;
 	private Integer arrivalFlightSeatNumber;
 	//If this filed is filled this is a reservation
 	private Date reservationDate;
 	//if this field is filled also reservation becomes a sale
 	private Date ticketSaleDate;
-	private User user;
-	private Boolean deleted;
+	private UserDTO user;
 	
-	public Ticket() {
+	
+	public TicketDTO() {
 		
-	
 	}
-
-	public Ticket(Integer id, Flight departureFlight, Flight arrivalFlight, Integer departureFlightSeatNumber,
-			Integer arrivalFlightSeatNumber, Date reservationDate, Date ticketSaleDate, User user, Boolean deleted) {
+	
+	
+	public TicketDTO(Integer id, FlightDTO departureFlight, FlightDTO arrivalFlight, Integer departureFlightSeatNumber,
+			Integer arrivalFlightSeatNumber, Date reservationDate, Date ticketSaleDate, UserDTO user) {
 		super();
 		this.id = id;
 		this.departureFlight = departureFlight;
@@ -36,101 +37,86 @@ public class Ticket {
 		this.reservationDate = reservationDate;
 		this.ticketSaleDate = ticketSaleDate;
 		this.user = user;
-		this.deleted = deleted;
 	}
 	
-	public static Ticket ticketFromDTO(TicketDTO ticketDTO) {
-		Ticket newTicket = new Ticket();
-		newTicket.setId(ticketDTO.getId());
-		newTicket.setDepartureFlight(Flight.flightFromDTO(ticketDTO.getDepartureFlight()));
-		newTicket.setArrivalFlight(Flight.flightFromDTO(ticketDTO.getArrivalFlight()));
-		newTicket.setDepartureFlightSeatNumber(ticketDTO.getDepartureFlightSeatNumber());
-		newTicket.setArrivalFlightSeatNumber(ticketDTO.getArrivalFlightSeatNumber());
-		newTicket.setReservationDate(ticketDTO.getReservationDate());
-		newTicket.setTicketSaleDate(ticketDTO.getTicketSaleDate());
-		newTicket.setUser(User.userFromDTO(ticketDTO.getUser()));
+	public TicketDTO(Ticket ticket) {
+		this(ticket.getId(), new FlightDTO(ticket.getDepartureFlight()), new FlightDTO(ticket.getArrivalFlight()), ticket.getDepartureFlightSeatNumber(), ticket.getArrivalFlightSeatNumber(),
+				ticket.getReservationDate(), ticket.getTicketSaleDate(), new UserDTO(ticket.getUser()));
+	}
+	
+	public static ArrayList<TicketDTO> toDTO(ArrayList<Ticket> tickets){
+		if(tickets != null) {
+			ArrayList<TicketDTO> ticketsDTO = new ArrayList<TicketDTO>();
+			for(Ticket ticket : tickets) {
+				TicketDTO tDTO = new TicketDTO(ticket);
+				ticketsDTO.add(tDTO);
+			}
+			return ticketsDTO;
+		}else {
+			return null;
+		}
 		
-		newTicket.setDeleted(false);
-		return newTicket;
 	}
 
-	
+
+
+
+
+
+
+
+
+
 	public Integer getId() {
 		return id;
 	}
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
-
-	public Flight getDepartureFlight() {
+	public FlightDTO getDepartureFlight() {
 		return departureFlight;
 	}
-
-	public void setDepartureFlight(Flight departureFlight) {
+	public void setDepartureFlight(FlightDTO departureFlight) {
 		this.departureFlight = departureFlight;
 	}
-
-	public Flight getArrivalFlight() {
+	public FlightDTO getArrivalFlight() {
 		return arrivalFlight;
 	}
-
-	public void setArrivalFlight(Flight arrivalFlight) {
+	public void setArrivalFlight(FlightDTO arrivalFlight) {
 		this.arrivalFlight = arrivalFlight;
 	}
-
 	public Integer getDepartureFlightSeatNumber() {
 		return departureFlightSeatNumber;
 	}
-
 	public void setDepartureFlightSeatNumber(Integer departureFlightSeatNumber) {
 		this.departureFlightSeatNumber = departureFlightSeatNumber;
 	}
-
 	public Integer getArrivalFlightSeatNumber() {
 		return arrivalFlightSeatNumber;
 	}
-
 	public void setArrivalFlightSeatNumber(Integer arrivalFlightSeatNumber) {
 		this.arrivalFlightSeatNumber = arrivalFlightSeatNumber;
 	}
-
 	public Date getReservationDate() {
 		return reservationDate;
 	}
-
 	public void setReservationDate(Date reservationDate) {
 		this.reservationDate = reservationDate;
 	}
-
 	public Date getTicketSaleDate() {
 		return ticketSaleDate;
 	}
-
 	public void setTicketSaleDate(Date ticketSaleDate) {
 		this.ticketSaleDate = ticketSaleDate;
 	}
-
-	public User getUser() {
+	public UserDTO getUser() {
 		return user;
 	}
-
-	public void setUser(User user) {
+	public void setUser(UserDTO user) {
 		this.user = user;
 	}
+	
+	
+	
 
-	public Boolean getDeleted() {
-		return deleted;
-	}
-
-	public void setDeleted(Boolean deleted) {
-		this.deleted = deleted;
-	}
-	
-	
-	
-	
-	
-	
-	
 }

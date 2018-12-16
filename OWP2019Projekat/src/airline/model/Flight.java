@@ -2,6 +2,9 @@ package airline.model;
 
 import java.util.Date;
 
+import airline.dto.AirportDTO;
+import airline.dto.FlightDTO;
+
 public class Flight {
 	
 	private Integer id;
@@ -35,6 +38,20 @@ public class Flight {
 		this.numberOfSeats = numberOfSeats;
 		this.price = price;
 		this.deleted = deleted;
+	}
+	
+	public static Flight flightFromDTO(FlightDTO flightDTO) {
+		Flight newFlight = new Flight();
+		newFlight.setId(flightDTO.getId());
+		newFlight.setNumber(flightDTO.getNumber());
+		newFlight.setDeparture(flightDTO.getDeparture());
+		newFlight.setArrival(flightDTO.getArrival());
+		newFlight.setFlyingFrom(Airport.AirportFromDTO(flightDTO.getFlyingFrom()));
+		newFlight.setFlyingTo(Airport.AirportFromDTO(flightDTO.getFlyingTo()));
+		newFlight.setNumberOfSeats(flightDTO.getNumberOfSeats());
+		newFlight.setPrice(flightDTO.getPrice());
+		newFlight.setDeleted(false);
+		return newFlight;
 	}
 
 

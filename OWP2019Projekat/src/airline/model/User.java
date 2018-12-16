@@ -2,6 +2,8 @@ package airline.model;
 
 import java.util.Date;
 
+import airline.dto.UserDTO;
+
 public class User {
 	
 	public enum Role{
@@ -35,6 +37,21 @@ public class User {
 		this.role = role;
 		this.blocked = blocked;
 		this.deleted = deleted;
+	}
+	
+	public static User userFromDTO(UserDTO userDTO) {
+		User newUser = new User();
+		newUser.setId(userDTO.getId());
+		newUser.setUserName(userDTO.getUserName());
+		newUser.setPassword(userDTO.getPassword());
+		newUser.setFirstName(userDTO.getFirstName());
+		newUser.setLastName(userDTO.getLastName());
+		newUser.setRegistrationDate(userDTO.getRegistrationDate());
+		newUser.setRole(userDTO.getRole());
+		newUser.setBlocked(userDTO.getBlocked());
+		newUser.setDeleted(false);
+		
+		return newUser;
 	}
 
 

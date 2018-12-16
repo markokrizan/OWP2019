@@ -55,6 +55,10 @@
     <servlet-name>TicketController</servlet-name>
     <url-pattern>/ticket</url-pattern>
   </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>TicketController</servlet-name>
+    <url-pattern>/ticket/*</url-pattern>
+  </servlet-mapping>
   <servlet>
     <description></description>
     <display-name>UserController</display-name>
@@ -64,6 +68,10 @@
   <servlet-mapping>
     <servlet-name>UserController</servlet-name>
     <url-pattern>/user</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>UserController</servlet-name>
+    <url-pattern>/user/*</url-pattern>
   </servlet-mapping>
   <servlet>
     <description></description>
