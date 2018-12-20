@@ -45,7 +45,14 @@ public class AuthController extends HttpServlet {
 				//return token
 				String token = AuthUtil.generateToken(user);
 				response.setStatus(200);
-				response.setHeader("Authorization", token);
+				//There is a restriction to access response headers when you are using Fetch API over CORS. Due to this restriction, you can access only following standard headers:
+				//Cache-Control
+				//Content-Language
+				//Content-Type
+				//Expires
+				//Last-Modified
+				//Pragma
+				response.setHeader("Pragma", token);
 				
 			}else {
 				MessageDTO message = new MessageDTO("error", "Wront credentials!");

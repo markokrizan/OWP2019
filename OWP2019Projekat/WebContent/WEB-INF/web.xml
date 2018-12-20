@@ -93,7 +93,15 @@
     <servlet-name>AuthController</servlet-name>
     <url-pattern>/login</url-pattern>
   </servlet-mapping>
-
+  <filter>
+    <display-name>CORSFilter</display-name>
+    <filter-name>CORSFilter</filter-name>
+    <filter-class>airline.security.CORSFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>CORSFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 </web-app>
 <!-- https://stackoverflow.com/questions/2437465/how-to-change-context-root-of-a-dynamic-web-project-in-eclipse -->
 <!-- https://coderanch.com/t/487496/java/set-Servlet-file-load-index -->
