@@ -28,6 +28,13 @@ public class UserController extends HttpServlet {
 		String uri = request.getRequestURI();
 		Integer lastSlashIndex = uri.lastIndexOf('/');
 		String lastUriPart = uri.substring(lastSlashIndex + 1, uri.length());
+		
+		//search param check:
+		String query = request.getParameter("search");
+		if(query != null) {
+			doFindOne(query, request, response);
+			return;
+		}
 
 		
 		try {
@@ -89,6 +96,23 @@ public class UserController extends HttpServlet {
 			response.getWriter().write(jsonData);	
 		}
 		
+	}
+	
+	protected void doFindOne(String query, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		ArrayList<User> users = UserService.findOne(query);
+		if(users != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(UserDTO.toDTO(users));
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}else {
+			MessageDTO message = new MessageDTO("error", "processing_error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(500);
+			response.getWriter().write(jsonData);	
+		}
 	}
 
 

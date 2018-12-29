@@ -13,7 +13,7 @@ public class ConnectionManager {
 	public static boolean open(String database, String userName, String password) {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + database + "?useSSL=false", userName, password);
+			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/" + database + "?useSSL=false&useUnicode=true&characterEncoding=utf8", userName, password);
 			return true;
 		} catch (Exception ex) {
 			// TODO Auto-generated catch block

@@ -69,5 +69,14 @@ private static final Table table = Table.USER;
 			return null;
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<User> find(String query){
+		if(query != null) {
+			return (ArrayList<User>)(List<?>)GenericDAO.find(table, query);
+		}else {
+			return null;
+		}
+	}
 
 }

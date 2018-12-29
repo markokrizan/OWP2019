@@ -28,6 +28,10 @@ public class UserService {
 		return UserDAO.delete(user);
 	}
 	
+	public static ArrayList<User> findOne(String query){
+		return UserDAO.find(query);
+	}
+	
 	
 	
 

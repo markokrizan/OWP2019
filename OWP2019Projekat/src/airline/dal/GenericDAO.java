@@ -145,8 +145,8 @@ public class GenericDAO {
 	
 	
 	public static List<Object> getAll(Table table) {
+		
 		List<Object> objects = new ArrayList<Object>();
-
 		Connection conn = ConnectionManager.getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
@@ -541,6 +541,96 @@ public class GenericDAO {
 		}else {
 			return false;
 		}
+	}
+	
+	public static List<Object> find(Table table, String q){
+		
+		List<Object> objects = new ArrayList<Object>();
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		System.out.println(conn);
+		
+		if(q == null || q.equals("")){
+			return getAll(table);
+		}
+		
+		try {
+			//String query = "SELECT * FROM " + table.toString() + " WHERE deleted = 0";
+			String query = "SELECT * FROM " + table.toString() + " WHERE user_name LIKE ? OR role LIKE ?";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			pstmt.setString(1, q);
+			pstmt.setString(2, q);
+			
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				
+				if(table == Table.AIRPORT) {
+					Integer airportId = rset.getInt("airport_id");
+					String name = rset.getString("name");
+					Boolean deleted = rset.getBoolean("deleted");
+					objects.add((new Airport(airportId, name, deleted)));
+					
+				}else if(table == Table.FLIGHT) {
+					Integer flightId = rset.getInt("flight_id");
+					String number = rset.getString("number");
+					Date departureDate = rset.getDate("departure_date");
+					Date arrivalDate = rset.getDate("arrival_date");
+					Airport departureAirport = (Airport)getOne(Table.AIRPORT, rset.getInt("departure_airport_id"));
+					Airport arrivalAirport = (Airport)getOne(Table.AIRPORT, rset.getInt("arrival_airport_id"));
+					Integer noOfSeats = rset.getInt("no_of_seats");
+					Double price = rset.getDouble("price");
+					Boolean deleted = rset.getBoolean("deleted");
+					objects.add(new Flight(flightId, number, departureDate, arrivalDate, departureAirport, arrivalAirport, noOfSeats,
+							price, deleted));
+					
+				}else if(table == Table.USER) {
+					Integer userId = rset.getInt("user_id");
+					String userName = rset.getString("user_name");
+					String password = rset.getString("password");
+					String firstName = rset.getString("first_name");
+					String lastName = rset.getString("last_name");
+					Date registrationDate = rset.getDate("registration_date");
+					Role role = Role.valueOf(rset.getString("role"));
+					Boolean blocked = rset.getBoolean("blocked");
+					Boolean deleted = rset.getBoolean("deleted");
+					objects.add(new User(userId, userName, password, firstName, lastName, registrationDate, role, blocked, deleted));
+					
+					
+				}else if(table == Table.TICKET) {
+					Integer ticketId = rset.getInt("ticket_id");
+					Flight departureFlight = (Flight)getOne(Table.FLIGHT, rset.getInt("departure_flight_id"));
+					Flight arrivalFlight = (Flight)getOne(Table.FLIGHT, rset.getInt("arrival_flight_id"));
+					Integer departureFlightSeatNo = rset.getInt("departure_flight_seat_no");
+					Integer arrrivalFlightSeatNo = rset.getInt("arrival_flight_seat_no");
+					Date reservationDate = rset.getDate("reservation_date");
+					Date saleDate = rset.getDate("sale_date");
+					User user = (User)getOne(Table.USER, rset.getInt("user_id"));
+					Boolean deleted = rset.getBoolean("deleted");
+					
+					objects.add(new Ticket(ticketId, departureFlight, arrivalFlight, departureFlightSeatNo, arrrivalFlightSeatNo, 
+							reservationDate, saleDate, user, deleted));
+					
+				}else {
+					return null;
+				}
+				
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return objects;
+		
 	}
 	
 	
