@@ -30,19 +30,18 @@ public class AirportController extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//Auth check:
-		String token = request.getHeader("Authorization");
-		
-		//for example only admin can use this method
-		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
-		if(status != AuthStatus.AUTHORIZED) {
-			ObjectMapper mapper = new ObjectMapper();
-			MessageDTO message = new MessageDTO("error", "unauthrorized");
-			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
-			response.setStatus(403);
-			response.getWriter().write(jsonData);	
-			return;
-		}
+//		String token = request.getHeader("Authorization");
+//		//for example only admin can use this method
+//		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
+//		if(status != AuthStatus.AUTHORIZED) {
+//			ObjectMapper mapper = new ObjectMapper();
+//			MessageDTO message = new MessageDTO("error", "unauthrorized");
+//			String jsonData = mapper.writeValueAsString(message);
+//			response.setContentType("application/json");
+//			response.setStatus(403);
+//			response.getWriter().write(jsonData);	
+//			return;
+//		}
 		
 
 		//----------------------

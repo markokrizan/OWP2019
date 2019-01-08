@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import airline.dal.GenericDAO.Table;
+import airline.dto.SearchFlightDTO;
 import airline.model.Airport;
 import airline.model.Flight;
 
@@ -71,6 +72,14 @@ public class FlightDAO {
 		}else {
 			return null;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ArrayList<Flight> search(SearchFlightDTO sfdto){
+
+		return (ArrayList<Flight>)(List<?>)GenericDAO.find(table, sfdto);
+
+		
 	}
 
 }

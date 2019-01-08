@@ -4,12 +4,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import com.mysql.jdbc.Statement;
 
+import airline.dto.SearchFlightDTO;
+import airline.dto.SearchUserDTO;
 import airline.model.Airport;
 import airline.model.Flight;
 import airline.model.Ticket;
@@ -543,7 +546,196 @@ public class GenericDAO {
 		}
 	}
 	
-	public static List<Object> find(Table table, String q){
+	
+	public static String buildArrayString(Integer[] arr) {
+		String stringArray = "(";
+		for(int i = 0; i < arr.length; i++) {
+			if(i < arr.length - 1) {
+				stringArray += arr[i].toString();
+				stringArray += ", ";
+			}else if(i == arr.length -1){
+				stringArray += arr[i].toString();
+				stringArray += ")";
+			}
+			
+		}
+		return stringArray;
+	}
+	
+	
+	public static PreparedStatement generateFindQuery(Connection conn, Table table, Object o) {
+		PreparedStatement pstmt = null;
+		String query = null;	
+		switch(table) {
+		case AIRPORT:
+			
+			break;
+		case FLIGHT:
+			//what the query should look like:
+			
+//			select * from flight 
+//			where 
+//				number like 'a1' and
+//			    departure_airport_id in (1, 2) and
+//			    arrival_airport_id in (1, 4) and
+//			    price between 0 and 800 and
+//			    departure_date between '2018-12-04' and  '2018-12-05'  and
+//			    arrival_date between '2018-11-04' and  '2018-11-05' ;
+			
+			//prepare the query:
+			
+			query = "select * from flight";
+			SearchFlightDTO queryObject = SearchFlightDTO.class.cast(o);
+			
+			
+			//get query parts:
+			String number = null;
+			Integer[] departureAirportIds = null;
+			Integer[] arrivalAirportIds = null;
+			Double lowestPrice = null;
+			Double hightestPrice = null;
+			Date dateLowDeparture = null;
+			Date dateHighDeparture = null;
+			Date dateLowArrival = null;
+			Date dateHighArrival = null;
+			
+			try {
+				number = queryObject.getQueryText();
+				departureAirportIds = queryObject.getDepartureAirports();
+				arrivalAirportIds = queryObject.getArrivalAirports();
+			}catch(Exception e) {}
+			try {
+				lowestPrice = Double.parseDouble(queryObject.getLowestPrice());
+				hightestPrice = Double.parseDouble(queryObject.getHighestPrice());
+			}catch(Exception e) {}
+			try {
+				SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				dateLowDeparture = format.parse(queryObject.getDateLowDeparture());
+				dateHighDeparture = format.parse(queryObject.getDateHighDeparture());
+				dateLowArrival = format.parse(queryObject.getDateLowArrival());
+				dateHighArrival = format.parse(queryObject.getDateHighArrival());
+			}catch(Exception e) {}
+			
+			if(
+					(number != null && number != "") || 
+					(departureAirportIds != null && departureAirportIds.length > 0) || 
+					(arrivalAirportIds != null && arrivalAirportIds.length > 0) ||
+					(lowestPrice != null && hightestPrice != null) ||
+					(dateLowDeparture != null && dateHighDeparture != null) ||
+					(dateLowArrival != null && dateHighArrival != null)
+					
+			) {
+				query += " where ";
+			}
+					
+			if(number != null && number != "") {
+				query += "number like '";
+				query += number;
+				query += "'";
+			}
+			if(departureAirportIds != null && departureAirportIds.length > 0) {
+				if(number != null && number != "") {
+					query += " and ";
+				}
+				query += "departure_airport_id in ";
+				query += buildArrayString(departureAirportIds);
+				
+			}
+			if(arrivalAirportIds != null && arrivalAirportIds.length > 0) {
+				if(
+						(number != null && number != "") || 
+						(departureAirportIds != null && departureAirportIds.length > 0)
+				) {
+					query += " and ";
+				}
+				query += "arrival_airport_id in ";
+				query += buildArrayString(arrivalAirportIds);
+				
+			}
+			if(lowestPrice != null && hightestPrice != null) {
+				if(
+						(number != null && number != "") || 
+						(departureAirportIds != null && departureAirportIds.length > 0) || 
+						(arrivalAirportIds != null && arrivalAirportIds.length > 0)
+						
+				) {
+					query += " and ";
+				}
+					
+				query += "price between ";
+				query += lowestPrice;
+				query += " and ";
+				query += hightestPrice;
+				
+			}
+			if(dateLowDeparture != null && dateHighDeparture != null) {
+				if(
+						(number != null && number != "") || 
+						(departureAirportIds != null && departureAirportIds.length > 0) || 
+						(arrivalAirportIds != null && arrivalAirportIds.length > 0) ||
+						(lowestPrice != null && hightestPrice != null)
+						
+				) {
+					query += " and ";
+				}
+				query += "departure_date between ";
+				query += dateLowDeparture;
+				query += " and ";
+				query += dateHighDeparture;
+			}
+			if(dateLowArrival != null && dateHighArrival != null) {
+				if(
+						(number != null && number != "") || 
+						(departureAirportIds != null && departureAirportIds.length > 0) || 
+						(arrivalAirportIds != null && arrivalAirportIds.length > 0) ||
+						(lowestPrice != null && hightestPrice != null) ||
+						(dateLowDeparture != null && dateHighDeparture != null)
+						
+				) {
+					query += " and ";
+				}
+				query += "arrival_date between ";
+				query += dateLowArrival;
+				query += " and ";
+				query += dateHighArrival;
+			}
+			
+			
+			query += ";";
+			
+			System.out.println("Before processing into a pstmt: " + query);
+			System.out.println("DateLowDeparture " + dateLowDeparture);
+			System.out.println("DateHighDeparture " + dateHighDeparture);
+			
+			
+			try {
+				pstmt = conn.prepareStatement(query);
+				return pstmt;
+				//EVERYTHING ELSE SQL INJECTION PRONE!!!
+			}catch(SQLException e) {System.out.println("Error in query!");}
+			
+			break;
+		case USER:
+			try {
+				query = "SELECT * FROM user WHERE user_name LIKE ? OR role LIKE ?";
+				pstmt = conn.prepareStatement(query);
+				String q = SearchUserDTO.class.cast(o).getQuery();
+				pstmt.setString(1, q);
+				pstmt.setString(2, q);
+				return pstmt;
+			}catch(SQLException ex) {System.out.println("Error in query!");}
+			break;
+		case TICKET:
+			//doSearch(request, response);
+			break;	
+		default:
+			return null;
+		
+		}
+		return null;
+	}
+	
+	public static List<Object> find(Table table, Object o){
 		
 		List<Object> objects = new ArrayList<Object>();
 		Connection conn = ConnectionManager.getConnection();
@@ -552,18 +744,12 @@ public class GenericDAO {
 		
 		System.out.println(conn);
 		
-		if(q == null || q.equals("")){
+		if(o == null){
 			return getAll(table);
 		}
 		
 		try {
-			//String query = "SELECT * FROM " + table.toString() + " WHERE deleted = 0";
-			String query = "SELECT * FROM " + table.toString() + " WHERE user_name LIKE ? OR role LIKE ?";
-			
-			pstmt = conn.prepareStatement(query);
-			
-			pstmt.setString(1, q);
-			pstmt.setString(2, q);
+			pstmt = generateFindQuery(conn, table, o);
 			
 			System.out.println(pstmt);
 
@@ -630,6 +816,55 @@ public class GenericDAO {
 		}
 		
 		return objects;
+		
+	}
+
+	
+	public static ArrayList<Ticket> getUserTickets(Integer userId) {
+		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT * FROM ticket WHERE user_id = ?;";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			pstmt.setInt(1, userId);
+			
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				
+			
+				Integer ticketId = rset.getInt("ticket_id");
+				Flight departureFlight = (Flight)getOne(Table.FLIGHT, rset.getInt("departure_flight_id"));
+				Flight arrivalFlight = (Flight)getOne(Table.FLIGHT, rset.getInt("arrival_flight_id"));
+				Integer departureFlightSeatNo = rset.getInt("departure_flight_seat_no");
+				Integer arrrivalFlightSeatNo = rset.getInt("arrival_flight_seat_no");
+				Date reservationDate = rset.getDate("reservation_date");
+				Date saleDate = rset.getDate("sale_date");
+				User user = (User)getOne(Table.USER, rset.getInt("user_id"));
+				Boolean deleted = rset.getBoolean("deleted");
+				
+				tickets.add(new Ticket(ticketId, departureFlight, arrivalFlight, departureFlightSeatNo, arrrivalFlightSeatNo, 
+						reservationDate, saleDate, user, deleted));
+				
+				
+				
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return tickets;
+		
 		
 	}
 	

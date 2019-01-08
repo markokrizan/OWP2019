@@ -11,8 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
+import airline.controller.ControllerUtil.UserUriMeaning;
 import airline.dto.MessageDTO;
+import airline.dto.TicketDTO;
 import airline.dto.UserDTO;
+import airline.model.Ticket;
 import airline.model.User;
 import airline.service.UserService;
 
@@ -26,35 +30,37 @@ public class UserController extends HttpServlet {
 		
 		//URI check:
 		String uri = request.getRequestURI();
-		Integer lastSlashIndex = uri.lastIndexOf('/');
-		String lastUriPart = uri.substring(lastSlashIndex + 1, uri.length());
 		
-		//search param check:
+		//firt query check
 		String query = request.getParameter("search");
 		if(query != null) {
 			doFindOne(query, request, response);
 			return;
 		}
-
 		
-		try {
-			Integer id = Integer.parseInt(lastUriPart);
-			doGetOne(id, request, response);
-			return;
-		}catch (NumberFormatException e) {
-			if(lastUriPart.equals("user")){
+		//then rest of the uri check
+		UserUriMeaning uriResult = ControllerUtil.checkUserURI(uri);
+		
+		switch(uriResult) {
+			case ALL:
 				doGetAll(request, response);
-				return;
-			}else {
-				MessageDTO message = new MessageDTO("error", e.getMessage());
+				break;
+			case ONE:
+				doGetOne(ControllerUtil.userId, request, response);
+				break;
+			case ERROR:
+				MessageDTO message = new MessageDTO("error", ControllerUtil.userErrorMessage);
 				ObjectMapper mapper = new ObjectMapper();
 				String jsonData = mapper.writeValueAsString(message);
 				response.setContentType("application/json");
 				response.getWriter().write(jsonData);	
-				return;
+				break;
+			case USER_TICKETS:
+				doGetTickets(ControllerUtil.userId, request, response);
+				break;	
 			}
 		
-		}
+		
 		
 		//------------------------------------------------
 		
@@ -103,6 +109,23 @@ public class UserController extends HttpServlet {
 		if(users != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(UserDTO.toDTO(users));
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}else {
+			MessageDTO message = new MessageDTO("error", "processing_error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(500);
+			response.getWriter().write(jsonData);	
+		}
+	}
+	
+	protected void doGetTickets(Integer userId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		ArrayList<Ticket> tickets = UserService.getUserTickets(userId);
+		if(tickets != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(TicketDTO.toDTO(tickets));
 			response.setContentType("application/json");
 			response.getWriter().write(jsonData);	
 		}else {

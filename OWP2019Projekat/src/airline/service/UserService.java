@@ -1,9 +1,9 @@
 package airline.service;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import airline.dal.UserDAO;
+import airline.model.Ticket;
 import airline.model.User;
 
 public class UserService {
@@ -14,6 +14,10 @@ public class UserService {
 	
 	public static ArrayList<User> getAll(){
 		return UserDAO.getAll();
+	}
+	
+	public static ArrayList<Ticket> getUserTickets(Integer userId){
+		return UserDAO.getTickets(userId);
 	}
 	
 	public static User create(User user){

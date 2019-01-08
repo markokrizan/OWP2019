@@ -1,10 +1,9 @@
 package airline.service;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
-import airline.dal.AirportDAO;
 import airline.dal.FlightDAO;
+import airline.dto.SearchFlightDTO;
 import airline.model.Flight;
 
 public class FlightService {
@@ -27,6 +26,10 @@ public class FlightService {
 	
 	public static Flight delete(Flight flight){
 		return FlightDAO.delete(flight);
+	}
+	
+	public static ArrayList<Flight> search(SearchFlightDTO sfdto){
+		return FlightDAO.search(sfdto);
 	}
 	
 	

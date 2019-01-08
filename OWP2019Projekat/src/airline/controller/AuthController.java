@@ -52,6 +52,7 @@ public class AuthController extends HttpServlet {
 				//Expires
 				//Last-Modified
 				//Pragma
+				System.out.println(token);
 				response.setHeader("Pragma", token);
 				
 			}else {
@@ -59,7 +60,7 @@ public class AuthController extends HttpServlet {
 				ObjectMapper mapper = new ObjectMapper();
 				String jsonData = mapper.writeValueAsString(message);
 				response.setContentType("application/json");
-				response.setStatus(401);
+				response.setStatus(403);
 				response.getWriter().write(jsonData);
 				
 			}

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import airline.dal.GenericDAO.Table;
+import airline.model.Ticket;
 import airline.model.User;
 
 public class UserDAO {
@@ -77,6 +78,11 @@ private static final Table table = Table.USER;
 		}else {
 			return null;
 		}
+	}
+
+
+	public static ArrayList<Ticket> getTickets(Integer userId) {
+		return GenericDAO.getUserTickets(userId);
 	}
 
 }
