@@ -68,8 +68,8 @@ public class FlightController extends HttpServlet {
 			response.setContentType("application/json");
 			response.getWriter().write(jsonData);	
 			break;
-		case SEARCH:
-			//doSearch(request, response);
+		case CURRENT:
+			doGetCurrent(request, response);
 			break;	
 		case DEPARTURE_AIRPORT:
 			
@@ -102,6 +102,25 @@ public class FlightController extends HttpServlet {
 			response.setContentType("application/json");
 			response.getWriter().write(jsonData);	
 		}
+		
+	}
+	
+	protected void doGetCurrent(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		ArrayList<Flight> flights = FlightService.getCurrent();
+		if(flights != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(FlightDTO.toDTO(flights));
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}else {
+			MessageDTO message = new MessageDTO("error", "processing_error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}
+	
+		
 		
 	}
 	

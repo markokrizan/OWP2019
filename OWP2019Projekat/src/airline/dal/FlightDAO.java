@@ -31,6 +31,11 @@ public class FlightDAO {
 		
 	}
 	
+
+	public static ArrayList<Flight> getCurrent(){
+		return GenericDAO.getCurrentFlights();
+	}
+	
 	public static Flight create(Flight flight) {
 		if(flight != null) {
 			try {

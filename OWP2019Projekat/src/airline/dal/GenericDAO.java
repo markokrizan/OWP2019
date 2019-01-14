@@ -869,6 +869,51 @@ public class GenericDAO {
 	}
 	
 	
+	public static ArrayList<Flight> getCurrentFlights() {
+		ArrayList<Flight> flights = new ArrayList<Flight>();
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT * FROM flight WHERE departure_date >= NOW();";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				
+			
+				Integer flightId = rset.getInt("flight_id");
+				String number = rset.getString("number");
+				Date departureDate = rset.getDate("departure_date");
+				Date arrivalDate = rset.getDate("arrival_date");
+				Airport departureAirport = (Airport)getOne(Table.AIRPORT, rset.getInt("departure_airport_id"));
+				Airport arrivalAirport = (Airport)getOne(Table.AIRPORT, rset.getInt("arrival_airport_id"));
+				Integer noOfSeats = rset.getInt("no_of_seats");
+				Double price = rset.getDouble("price");
+				Boolean deleted = rset.getBoolean("deleted");
+				flights.add(new Flight(flightId, number, departureDate, arrivalDate, departureAirport, arrivalAirport, noOfSeats,
+						price, deleted));
+				
+				
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return flights;
+		
+		
+	}
+	
+	
 	
 	
 	

@@ -25,8 +25,6 @@ public class AirportDAO {
 	@SuppressWarnings("unchecked")
 	public static ArrayList<Airport> getAll(){
 		return (ArrayList<Airport>)(List<?>)GenericDAO.getAll(table);
-
-		
 	}
 	
 	public static Airport create(Airport airport){

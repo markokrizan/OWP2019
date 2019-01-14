@@ -24,6 +24,7 @@ public class ControllerUtil {
 		ONE,
 		ERROR,
 		SEARCH,
+		CURRENT,
 		DEPARTURE_AIRPORT,
 		ARRIVAL_AIRPORT
 		
@@ -84,7 +85,10 @@ public class ControllerUtil {
 
 		System.out.println(uri);
 		
+		// /search
 		Boolean searching = false;
+		// /current
+		Boolean current = false;
 	
 		Integer flightId = null;
 		String flightCollection = null;
@@ -95,6 +99,9 @@ public class ControllerUtil {
 			if(uriParts.length > 3) {
 				if(uriParts[3].contentEquals("search")) {
 					searching = true;
+				
+				}else if(uriParts[3].contentEquals("current")) {
+					current = true;
 				}else {
 					ControllerUtil.flightErrorMessage = e.getMessage();
 					
@@ -113,7 +120,10 @@ public class ControllerUtil {
 		if(flightId == null && flightCollection == null) {
 			if(searching == true) {
 				return FlightUriMeaning.SEARCH;
-			}else {
+			}else if(current == true) {
+				return FlightUriMeaning.CURRENT;
+			}
+			else {
 				return FlightUriMeaning.ALL;
 			}
 			

@@ -16,6 +16,10 @@ public class FlightService {
 		return FlightDAO.getAll();
 	}
 	
+	public static ArrayList<Flight> getCurrent(){
+		return FlightDAO.getCurrent();
+	}
+	
 	public static Flight create(Flight flight){
 		return FlightDAO.create(flight);
 	}
