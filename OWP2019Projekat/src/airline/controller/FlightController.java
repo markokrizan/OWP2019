@@ -54,6 +54,7 @@ public class FlightController extends HttpServlet {
 		//URI check:
 		String uri = request.getRequestURI();
 		FlightUriMeaning uriResult = ControllerUtil.checkFlightURI(uri);
+		System.out.println(uriResult);
 		switch(uriResult) {
 		case ALL:
 			doGetAll(request, response);
@@ -70,7 +71,10 @@ public class FlightController extends HttpServlet {
 			break;
 		case CURRENT:
 			doGetCurrent(request, response);
-			break;	
+			break;
+		case RETURNING:
+			doGetReturning(ControllerUtil.flightId, request, response);
+			break;
 		case DEPARTURE_AIRPORT:
 			
 			break;
@@ -86,6 +90,24 @@ public class FlightController extends HttpServlet {
 		
 	}
 	
+	protected void doGetReturning(Integer flightId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println(flightId);
+		ArrayList<Flight> flights = FlightService.returning(flightId);
+		System.out.println(flights);
+		if(flights != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(FlightDTO.toDTO(flights));
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}else {
+			MessageDTO message = new MessageDTO("error", "processing_error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}
+	}
+
 	protected void doSearch(SearchFlightDTO sfDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
 		System.out.println(sfDTO);
 	

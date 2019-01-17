@@ -36,6 +36,10 @@ public class FlightService {
 		return FlightDAO.search(sfdto);
 	}
 	
+	public static ArrayList<Flight> returning(Integer flightId){
+		return FlightDAO.returning(flightId);
+	}
+	
 	
 
 }

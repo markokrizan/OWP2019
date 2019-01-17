@@ -25,6 +25,7 @@ public class ControllerUtil {
 		ERROR,
 		SEARCH,
 		CURRENT,
+		RETURNING,
 		DEPARTURE_AIRPORT,
 		ARRIVAL_AIRPORT
 		
@@ -143,11 +144,17 @@ public class ControllerUtil {
 				ControllerUtil.flightId = flightId;
 				return FlightUriMeaning.DEPARTURE_AIRPORT;
 			}else if(flightCollection.equals("arrivalAirport")) {
+				ControllerUtil.flightId = flightId;
 				return FlightUriMeaning.ARRIVAL_AIRPORT;
+			}else if(flightCollection.equals("returning")) {
+				ControllerUtil.flightId = flightId;
+				return FlightUriMeaning.RETURNING;
 			}else {
 				return FlightUriMeaning.ERROR;
 			}
 		}
+		
+		
 		
 		return FlightUriMeaning.ERROR;
 		
