@@ -36,6 +36,11 @@ public class FlightDAO {
 		return GenericDAO.getCurrentFlights();
 	}
 	
+	
+	public static ArrayList<Integer> getOccupiedSeats(Integer flightId){
+		return GenericDAO.getOccupiedSeats(flightId);
+	}
+	
 	public static ArrayList<Flight> returning(Integer flightId){
 		return GenericDAO.getReturningFlights(flightId);
 	}

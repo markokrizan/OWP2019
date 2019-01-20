@@ -25,11 +25,13 @@ public class ControllerUtil {
 		ERROR,
 		SEARCH,
 		CURRENT,
+		OCCUPIED_SEATS,
 		RETURNING,
 		DEPARTURE_AIRPORT,
 		ARRIVAL_AIRPORT
 		
 	}
+	
 	
 	public static UserUriMeaning checkUserURI(String uri) {
 		
@@ -149,6 +151,9 @@ public class ControllerUtil {
 			}else if(flightCollection.equals("returning")) {
 				ControllerUtil.flightId = flightId;
 				return FlightUriMeaning.RETURNING;
+			}else if(flightCollection.equals("occupied-seats")) {
+				ControllerUtil.flightId = flightId;
+				return FlightUriMeaning.OCCUPIED_SEATS;
 			}else {
 				return FlightUriMeaning.ERROR;
 			}

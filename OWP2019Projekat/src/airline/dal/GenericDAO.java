@@ -1,5 +1,6 @@
 package airline.dal;
 
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -920,7 +921,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM flight WHERE departure_airport_id IN (SELECT arrival_airport_id FROM flight WHERE flight_id = ?) AND departure_date >= (SELECT arrival_date FROM flight WHERE flight_id = ?);";
+			String query = "SELECT * FROM flight WHERE departure_airport_id IN (SELECT arrival_airport_id FROM flight WHERE flight_id = ? AND departure_date > NOW()) AND departure_date >= (SELECT arrival_date FROM flight WHERE flight_id = ? AND departure_date > NOW());";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -960,6 +961,58 @@ public class GenericDAO {
 		
 	}
 	
+	
+
+
+	public static ArrayList<Integer> getOccupiedSeats(Integer flight){
+		ArrayList<Integer> occupiedSeats = new ArrayList<Integer>();
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt1 = null;
+		PreparedStatement pstmt2 = null;
+		ResultSet rset1 = null;
+		ResultSet rset2 = null;
+		
+		
+		
+		try {
+			
+			String query1 = "SELECT departure_flight_seat_no FROM ticket WHERE departure_flight_id = ?;";
+			
+			pstmt1 = conn.prepareStatement(query1);
+			pstmt1.setInt(1, flight);
+			rset1 = pstmt1.executeQuery();
+			
+			String query2 = "SELECT arrival_flight_seat_no FROM ticket WHERE arrival_flight_id = ?;";
+			
+			pstmt2 = conn.prepareStatement(query2);
+			pstmt2.setInt(1, flight);
+			rset2 = pstmt2.executeQuery();
+			
+			
+			while (rset1.next()) {
+				Integer seatNo = rset1.getInt("departure_flight_seat_no");
+				occupiedSeats.add(seatNo);
+			}
+			
+			while (rset2.next()) {
+				Integer seatNo = rset1.getInt("arrival_flight_seat_no");
+				occupiedSeats.add(seatNo);
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+
+		} finally {
+			try {pstmt1.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {pstmt2.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset1.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset2.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return occupiedSeats;
+		
+		
+	}
 	
 	
 	

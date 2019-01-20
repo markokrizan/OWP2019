@@ -49,13 +49,13 @@ INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, 
 
 #Future:
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
-	VALUES('b1', '2019-01-01 20:45:00', '2019-01-02 06:00:00', 1, 2, 20, 1090.50, 0);
+	VALUES('b1', '2019-03-01 20:45:00', '2019-01-02 06:00:00', 1, 2, 20, 1090.50, 0);
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
-	VALUES('b2', '2019-01-04 20:45:00', '2019-01-05 06:00:00', 1, 3, 20, 1200.50, 0);
+	VALUES('b2', '2019-03-02 20:45:00', '2019-01-05 06:00:00', 2, 1, 20, 1200.50, 0);
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
-	VALUES('b3', '2019-02-04 20:45:00', '2019-02-05 06:00:00', 2, 1, 20, 900.00, 0);
+	VALUES('b3', '2019-03-04 20:45:00', '2019-02-05 06:00:00', 3, 4, 20, 900.00, 0);
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
-	VALUES('b4', '2019-03-04 20:45:00', '2019-03-05 06:00:00', 3, 1, 20, 350.49, 0);
+	VALUES('b4', '2019-03-05 20:45:00', '2019-03-05 06:00:00', 4, 3, 20, 350.49, 0);
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
 	VALUES('b5', '2019-04-04 20:45:00', '2019-04-05 06:00:00', 4, 5, 20, 599.99, 0);
     
@@ -68,15 +68,15 @@ INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, 
 #(vremena) dolaska polaznog leta
 
 INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)
-	VALUES (1, 3, 12, 43, '2018-11-04 15:00:00', '2018-12-04 20:00:00', 3, 0);
+	VALUES (1, 3, 2, 3, '2018-07-04 15:00:00', '2018-12-04 20:00:00', 3, 0);
 INSERT INTO Ticket (departure_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)
-	VALUES (1, 13, 14, '2018-11-04 15:00:00', '2018-12-04 20:00:00', 3, 0); #nije povratni
+	VALUES (1, 4, 5, '2018-07-04 15:00:00', '2018-12-04 20:00:00', 3, 0); #nije povratni
 INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)
-	VALUES (2, 4, 9, 10, '2018-11-04 15:00:00', '2018-12-04 20:00:00', 3, 0);
+	VALUES (2, 4, 6, 7, '2018-07-04 15:00:00', '2018-12-04 20:00:00', 3, 0);
 INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)
-	VALUES (1, 3, 14, 15, '2018-11-04 15:00:00', '2018-12-04 20:00:00', 2, 0);
+	VALUES (1, 3, 8, 9, '2018-07-04 15:00:00', '2018-12-04 20:00:00', 2, 0);
 INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)
-	VALUES (2, 4, 7, 6, '2018-11-04 15:00:00', '2018-12-04 20:00:00', 2, 0);
+	VALUES (2, 4, 10, 11, '2018-07-04 15:00:00', '2018-12-04 20:00:00', 2, 0);
 
 
 

@@ -75,6 +75,9 @@ public class FlightController extends HttpServlet {
 		case RETURNING:
 			doGetReturning(ControllerUtil.flightId, request, response);
 			break;
+		case OCCUPIED_SEATS:
+			doGetOccupiedSeats(ControllerUtil.flightId, request, response);
+			break;
 		case DEPARTURE_AIRPORT:
 			
 			break;
@@ -89,6 +92,25 @@ public class FlightController extends HttpServlet {
 		
 		
 	}
+	
+	protected void doGetOccupiedSeats(Integer flightId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println(flightId);
+		ArrayList<Integer> seats = FlightService.getOccupiedSeats(flightId);
+		System.out.println(seats);
+		if(seats != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(seats);
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}else {
+			MessageDTO message = new MessageDTO("error", "processing_error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+		}
+	}
+	
 	
 	protected void doGetReturning(Integer flightId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		System.out.println(flightId);

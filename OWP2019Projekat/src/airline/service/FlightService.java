@@ -20,6 +20,10 @@ public class FlightService {
 		return FlightDAO.getCurrent();
 	}
 	
+	public static ArrayList<Integer> getOccupiedSeats(Integer flightId){
+		return FlightDAO.getOccupiedSeats(flightId);
+	}
+	
 	public static Flight create(Flight flight){
 		return FlightDAO.create(flight);
 	}
