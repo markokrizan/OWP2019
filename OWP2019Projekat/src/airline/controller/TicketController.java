@@ -53,7 +53,7 @@ public class TicketController extends HttpServlet {
 				MessageDTO message = new MessageDTO("error", e.getMessage());
 				ObjectMapper mapper = new ObjectMapper();
 				String jsonData = mapper.writeValueAsString(message);
-				response.setContentType("application/json");
+				response.setContentType("application/json;charset=UTF-8");
 				response.getWriter().write(jsonData);	
 				return;
 			}
@@ -72,14 +72,14 @@ public class TicketController extends HttpServlet {
 		if(ticket != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(new TicketDTO(ticket));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "invalid_ticket_id");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
@@ -92,14 +92,14 @@ public class TicketController extends HttpServlet {
 		if(tickets != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(TicketDTO.toDTO(tickets));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(500);
 			response.getWriter().write(jsonData);	
 		}
@@ -129,13 +129,13 @@ public class TicketController extends HttpServlet {
 		insertedTicket = TicketService.create(Ticket.ticketFromDTO(ticketDTO));
 		if(insertedTicket != null) {
 			String jsonData = mapper.writeValueAsString(new TicketDTO(insertedTicket));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
@@ -170,13 +170,13 @@ public class TicketController extends HttpServlet {
 		changedTicket = TicketService.update(Ticket.ticketFromDTO(ticketDTO));
 		if(changedTicket != null) {
 			String jsonData = mapper.writeValueAsString(new TicketDTO(changedTicket));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
@@ -209,13 +209,13 @@ public class TicketController extends HttpServlet {
 		ticketForDeletion = TicketService.delete(Ticket.ticketFromDTO(ticketDTO));
 		if(ticketForDeletion != null) {
 			String jsonData = mapper.writeValueAsString(new TicketDTO(ticketForDeletion));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}

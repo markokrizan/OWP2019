@@ -36,7 +36,7 @@ public class AuthController extends HttpServlet {
 			MessageDTO message = new MessageDTO("error", "You didn't send your credentials!");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(401);
 			response.getWriter().write(jsonData);
 		}else {
@@ -53,13 +53,14 @@ public class AuthController extends HttpServlet {
 				//Last-Modified
 				//Pragma
 				System.out.println(token);
+				response.setContentType("charset=UTF-8");
 				response.setHeader("Pragma", token);
 				
 			}else {
 				MessageDTO message = new MessageDTO("error", "Wront credentials!");
 				ObjectMapper mapper = new ObjectMapper();
 				String jsonData = mapper.writeValueAsString(message);
-				response.setContentType("application/json");
+				response.setContentType("application/json;charset=UTF-8");
 				response.setStatus(403);
 				response.getWriter().write(jsonData);
 				

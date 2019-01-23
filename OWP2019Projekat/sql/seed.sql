@@ -67,6 +67,8 @@ INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, 
 #dolazni aerodrom isti kao polazni aerodrom polaznog leta i Ä�iji je datum (vreme) polaska nakon datuma
 #(vremena) dolaska polaznog leta
 
+
+
 INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)
 	VALUES (1, 3, 2, 3, '2018-07-04 15:00:00', '2018-12-04 20:00:00', 3, 0);
 INSERT INTO Ticket (departure_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)
@@ -77,7 +79,14 @@ INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_sea
 	VALUES (1, 3, 8, 9, '2018-07-04 15:00:00', '2018-12-04 20:00:00', 2, 0);
 INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)
 	VALUES (2, 4, 10, 11, '2018-07-04 15:00:00', '2018-12-04 20:00:00', 2, 0);
+	
+	
+#future flights b1 (id 6) and b2 (id 7) for seat testing:
 
+INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, sale_date, user_id, deleted)
+	VALUES (6, 7, 1, 2, '2019-01-17 15:00:00', 3, 0);
+INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, sale_date, user_id, deleted)
+	VALUES (6, 7, 3, 4, '2018-01-18 15:00:00', 3, 0);
 
 
 

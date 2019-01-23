@@ -83,14 +83,14 @@ public class AirportController extends HttpServlet {
 		if(airport != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(new AirportDTO(airport));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "invalid_airport_id");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
 		}
@@ -101,13 +101,13 @@ public class AirportController extends HttpServlet {
 		if(airports != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(AirportDTO.toDTO(airports));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}
 	}
@@ -135,13 +135,13 @@ public class AirportController extends HttpServlet {
 		insertedAirport = AirportService.create(Airport.AirportFromDTO(airportDTO));
 		if(insertedAirport != null) {
 			String jsonData = mapper.writeValueAsString(new AirportDTO(insertedAirport));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
@@ -178,13 +178,13 @@ public class AirportController extends HttpServlet {
 		changedAirport = AirportService.update(Airport.AirportFromDTO(airportDTO));
 		if(changedAirport != null) {
 			String jsonData = mapper.writeValueAsString(new AirportDTO(changedAirport));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
@@ -220,13 +220,13 @@ public class AirportController extends HttpServlet {
 		airportForDeletion = AirportService.delete(Airport.AirportFromDTO(airportDTO));
 		if(airportForDeletion != null) {
 			String jsonData = mapper.writeValueAsString(new AirportDTO(airportForDeletion));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}

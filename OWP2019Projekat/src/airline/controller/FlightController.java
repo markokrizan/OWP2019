@@ -100,13 +100,13 @@ public class FlightController extends HttpServlet {
 		if(seats != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(seats);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}
 	}
@@ -119,13 +119,13 @@ public class FlightController extends HttpServlet {
 		if(flights != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(FlightDTO.toDTO(flights));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}
 	}
@@ -137,13 +137,13 @@ public class FlightController extends HttpServlet {
 		if(flights != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(FlightDTO.toDTO(flights));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}
 		
@@ -154,13 +154,13 @@ public class FlightController extends HttpServlet {
 		if(flights != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(FlightDTO.toDTO(flights));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}
 	
@@ -174,14 +174,14 @@ public class FlightController extends HttpServlet {
 		if(flight != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(flight));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "invalid_flight_id");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
@@ -193,13 +193,13 @@ public class FlightController extends HttpServlet {
 		if(flights != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(FlightDTO.toDTO(flights));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}
 		
@@ -239,13 +239,13 @@ public class FlightController extends HttpServlet {
 		insertedFlight = FlightService.create(Flight.flightFromDTO(flightDTO));
 		if(insertedFlight != null) {
 			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(insertedFlight));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}

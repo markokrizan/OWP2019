@@ -52,7 +52,7 @@ public class UserController extends HttpServlet {
 				MessageDTO message = new MessageDTO("error", ControllerUtil.userErrorMessage);
 				ObjectMapper mapper = new ObjectMapper();
 				String jsonData = mapper.writeValueAsString(message);
-				response.setContentType("application/json");
+				response.setContentType("application/json;charset=UTF-8");
 				response.getWriter().write(jsonData);	
 				break;
 			case USER_TICKETS:
@@ -69,10 +69,11 @@ public class UserController extends HttpServlet {
 	protected void doGetOne(Integer id, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		User user = UserService.getOne(id);
+		System.out.println(user);
 		if(user != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(new UserDTO(user));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(200);
 			response.getWriter().write(jsonData);	
 		}else {
@@ -91,7 +92,7 @@ public class UserController extends HttpServlet {
 		if(users != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(UserDTO.toDTO(users));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
@@ -109,7 +110,7 @@ public class UserController extends HttpServlet {
 		if(users != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(UserDTO.toDTO(users));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
@@ -126,7 +127,7 @@ public class UserController extends HttpServlet {
 		if(tickets != null) {
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(TicketDTO.toDTO(tickets));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.getWriter().write(jsonData);	
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
@@ -161,7 +162,7 @@ public class UserController extends HttpServlet {
 		insertedUser = UserService.create(User.userFromDTO(userDTO));
 		if(insertedUser != null) {
 			String jsonData = mapper.writeValueAsString(new UserDTO(insertedUser));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
@@ -202,13 +203,13 @@ public class UserController extends HttpServlet {
 		changedUser = UserService.update(User.userFromDTO(userDTO));
 		if(changedUser != null) {
 			String jsonData = mapper.writeValueAsString(new UserDTO(changedUser));
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
@@ -249,7 +250,7 @@ public class UserController extends HttpServlet {
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
 			String jsonData = mapper.writeValueAsString(message);
-			response.setContentType("application/json");
+			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}

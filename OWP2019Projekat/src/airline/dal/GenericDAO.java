@@ -982,22 +982,29 @@ public class GenericDAO {
 			pstmt1.setInt(1, flight);
 			rset1 = pstmt1.executeQuery();
 			
+			System.out.println(pstmt1);
+			
+			
 			String query2 = "SELECT arrival_flight_seat_no FROM ticket WHERE arrival_flight_id = ?;";
 			
 			pstmt2 = conn.prepareStatement(query2);
 			pstmt2.setInt(1, flight);
 			rset2 = pstmt2.executeQuery();
 			
+			System.out.println(pstmt2);
 			
+		
 			while (rset1.next()) {
 				Integer seatNo = rset1.getInt("departure_flight_seat_no");
 				occupiedSeats.add(seatNo);
 			}
 			
+		
 			while (rset2.next()) {
-				Integer seatNo = rset1.getInt("arrival_flight_seat_no");
+				Integer seatNo = rset2.getInt("arrival_flight_seat_no");
 				occupiedSeats.add(seatNo);
 			}
+			
 		} catch (SQLException ex) {
 			System.out.println("Greska u SQL upitu!");
 			ex.printStackTrace();
@@ -1008,6 +1015,7 @@ public class GenericDAO {
 			try {rset1.close();} catch (SQLException ex1) {ex1.printStackTrace();}
 			try {rset2.close();} catch (SQLException ex1) {ex1.printStackTrace();}
 		}
+		
 		
 		return occupiedSeats;
 		
