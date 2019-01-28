@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+import airline.controller.ControllerUtil.GenericUriMeaning;
 import airline.dto.MessageDTO;
 import airline.dto.TicketDTO;
 
@@ -37,32 +37,25 @@ public class TicketController extends HttpServlet {
 		//Uri check --------------------
 		
 		String uri = request.getRequestURI();
-		Integer lastSlashIndex = uri.lastIndexOf('/');
-		String lastUriPart = uri.substring(lastSlashIndex + 1, uri.length());
-
-		
-		try {
-			Integer id = Integer.parseInt(lastUriPart);
-			doGetOne(id, request, response);
-			return;
-		}catch (NumberFormatException e) {
-			if(lastUriPart.equals("ticket")){
-				doGetAll(request, response);
-				return;
-			}else {
-				MessageDTO message = new MessageDTO("error", e.getMessage());
-				ObjectMapper mapper = new ObjectMapper();
-				String jsonData = mapper.writeValueAsString(message);
-				response.setContentType("application/json;charset=UTF-8");
-				response.getWriter().write(jsonData);	
-				return;
-			}
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case TICKET_ALL:
+			doGetAll(request, response);
+			break;
+		case TICKET_ONE:
+			doGetOne(ControllerUtil.ticketId, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
 		
 		}
 		
 		
-		
-		//------------------------------
 	
 	}
 	
@@ -108,6 +101,10 @@ public class TicketController extends HttpServlet {
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		BufferedReader reader = null;
+		ObjectMapper mapper = null;
+		
+		
 		//Auth check -------------------
 
 
@@ -116,17 +113,38 @@ public class TicketController extends HttpServlet {
 		//------------------------------
 		
 		//Uri check --------------------
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case TICKET_CREATE:
+			reader = request.getReader();
+			mapper = new ObjectMapper();
+			TicketDTO ticketDTO = mapper.readValue(reader, TicketDTO.class);
+			doCreate(ticketDTO, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
 		
+		}
 		
 		
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
+		
+		
+	
+	}
+	
+	protected void doCreate(TicketDTO tDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		TicketDTO ticketDTO = mapper.readValue(reader, TicketDTO.class);
 		Ticket insertedTicket;
 
-		insertedTicket = TicketService.create(Ticket.ticketFromDTO(ticketDTO));
+		insertedTicket = TicketService.create(Ticket.ticketFromDTO(tDTO));
 		if(insertedTicket != null) {
 			String jsonData = mapper.writeValueAsString(new TicketDTO(insertedTicket));
 			response.setContentType("application/json;charset=UTF-8");
@@ -139,13 +157,13 @@ public class TicketController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-	
 	}
 
 
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+		BufferedReader reader = null;
+		ObjectMapper mapper = null;
 		//Auth check -------------------
 		
 		
@@ -154,20 +172,41 @@ public class TicketController extends HttpServlet {
 		//------------------------------
 				
 		//Uri check --------------------
-				
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case TICKET_UPDATE:
+			reader = request.getReader();
+			mapper = new ObjectMapper();
+			TicketDTO ticketDTO = mapper.readValue(reader, TicketDTO.class);
+			doUpdate(ticketDTO, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
+		
+		}
 				
 				
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
-		ObjectMapper mapper = new ObjectMapper();
-		TicketDTO ticketDTO = mapper.readValue(reader, TicketDTO.class);
+	
 		
 		
-		Ticket changedTicket;
 		
 	
-		changedTicket = TicketService.update(Ticket.ticketFromDTO(ticketDTO));
+	}
+	
+	protected void doUpdate(TicketDTO tDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		Ticket changedTicket;
+		
+		
+		changedTicket = TicketService.update(Ticket.ticketFromDTO(tDTO));
 		if(changedTicket != null) {
 			String jsonData = mapper.writeValueAsString(new TicketDTO(changedTicket));
 			response.setContentType("application/json;charset=UTF-8");
@@ -180,7 +219,6 @@ public class TicketController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-	
 	}
 	
 	@Override

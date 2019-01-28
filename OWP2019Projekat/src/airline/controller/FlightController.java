@@ -2,27 +2,20 @@ package airline.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import airline.controller.ControllerUtil.FlightUriMeaning;
-import airline.controller.ControllerUtil.UserUriMeaning;
+import airline.controller.ControllerUtil.GenericUriMeaning;
 import airline.dto.FlightDTO;
 import airline.dto.MessageDTO;
 import airline.dto.SearchFlightDTO;
 import airline.model.Flight;
-import airline.model.User.Role;
-import airline.security.AuthUtil;
-import airline.security.AuthUtil.AuthStatus;
 import airline.service.FlightService;
 
 /**
@@ -53,35 +46,34 @@ public class FlightController extends HttpServlet {
 		
 		//URI check:
 		String uri = request.getRequestURI();
-		FlightUriMeaning uriResult = ControllerUtil.checkFlightURI(uri);
-		System.out.println(uriResult);
-		switch(uriResult) {
-		case ALL:
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case FLIGHT_ALL:
 			doGetAll(request, response);
 			break;
-		case ONE:
+		case FLIGHT_ONE:
 			doGetOne(ControllerUtil.flightId, request, response);
 			break;
 		case ERROR:
-			MessageDTO message = new MessageDTO("error", ControllerUtil.flightErrorMessage);
+			MessageDTO message = new MessageDTO("error", "uri error");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
 			response.getWriter().write(jsonData);	
 			break;
-		case CURRENT:
+		case FLIGHT_CURRENT:
 			doGetCurrent(request, response);
 			break;
-		case RETURNING:
+		case FLIGHT_RETURNING:
 			doGetReturning(ControllerUtil.flightId, request, response);
 			break;
-		case OCCUPIED_SEATS:
+		case FLIGHT_OCCUPIED_SEATS:
 			doGetOccupiedSeats(ControllerUtil.flightId, request, response);
 			break;
-		case DEPARTURE_AIRPORT:
+		case FLIGHT_DEPARTURE_AIRPORT:
 			
 			break;
-		case ARRIVAL_AIRPORT:
+		case FLIGHT_ARRIVAL_AIRPORT:
 			
 			break;
 		}
@@ -208,6 +200,9 @@ public class FlightController extends HttpServlet {
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		BufferedReader reader = null;
+		ObjectMapper mapper = null;
+		
 		//Auth check -------------------
 		
 		
@@ -217,26 +212,43 @@ public class FlightController extends HttpServlet {
 		
 		//Uri check --------------------
 		String uri = request.getRequestURI();
-		FlightUriMeaning uriResult = ControllerUtil.checkFlightURI(uri);
-		if(uriResult == FlightUriMeaning.SEARCH) {
-			//you can onlu read the request body once, and its being read here by default
-			//in do search it is already read, so if you try to read it again it throws io exception
-			BufferedReader reader = request.getReader();
-			ObjectMapper mapper = new ObjectMapper();
-			SearchFlightDTO sfDTO = mapper.readValue(reader, SearchFlightDTO.class);
-			doSearch(sfDTO, request, response);
-			return;
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning){
+			case ERROR:
+				MessageDTO message = new MessageDTO("error", "uri error");
+				mapper = new ObjectMapper();
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json");
+				response.getWriter().write(jsonData);
+				return;
+			case FLIGHT_SEARCH:
+				//you can onlu read the request body once, and its being read here by default
+				//in do search it is already read, so if you try to read it again it throws io exception
+				reader = request.getReader();
+				mapper = new ObjectMapper();
+				SearchFlightDTO sfDTO = mapper.readValue(reader, SearchFlightDTO.class);
+				doSearch(sfDTO, request, response);
+				return;
+			case FLIGHT_CREATE:
+				reader = request.getReader();
+				mapper = new ObjectMapper();
+				FlightDTO flightDTO = mapper.readValue(reader, FlightDTO.class);
+				doCreateFlight(flightDTO, request, response);
+				return;
 		}
 		
+	
 		
-		//------------------------------
+
 		
-		BufferedReader reader = request.getReader();
-		ObjectMapper mapper = new ObjectMapper();
-		FlightDTO flightDTO = mapper.readValue(reader, FlightDTO.class);
+	}
+
+	public void doCreateFlight(FlightDTO fDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		ObjectMapper mapper = null;
 		Flight insertedFlight;
 
-		insertedFlight = FlightService.create(Flight.flightFromDTO(flightDTO));
+		insertedFlight = FlightService.create(Flight.flightFromDTO(fDTO));
 		if(insertedFlight != null) {
 			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(insertedFlight));
 			response.setContentType("application/json;charset=UTF-8");
@@ -249,12 +261,7 @@ public class FlightController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-		
-		
-		
 	}
-
-	
 
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -266,20 +273,37 @@ public class FlightController extends HttpServlet {
 		//------------------------------
 				
 		//Uri check --------------------
-				
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning){
+			case ERROR:
+				MessageDTO message = new MessageDTO("error", "uri error");
+				ObjectMapper mapper = new ObjectMapper();
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json");
+				response.getWriter().write(jsonData);
+				return;
+			case FLIGHT_UPDATE:
+				BufferedReader reader = request.getReader();
+				mapper = new ObjectMapper();
+				FlightDTO flightDTO = mapper.readValue(reader, FlightDTO.class);
+				doUpdate(flightDTO, request, response);
+				return;
+		}
 				
 				
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
+		
+		
+	}
+	
+	protected void doUpdate(FlightDTO fDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		FlightDTO flightDTO = mapper.readValue(reader, FlightDTO.class);
-		
-		
 		Flight changedFlight;
 		
 	
-		changedFlight = FlightService.update(Flight.flightFromDTO(flightDTO));
+		changedFlight = FlightService.update(Flight.flightFromDTO(fDTO));
 		if(changedFlight != null) {
 			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(changedFlight));
 			response.setContentType("application/json");
@@ -292,7 +316,6 @@ public class FlightController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-		
 	}
 	
 	@Override

@@ -11,8 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-import airline.controller.ControllerUtil.UserUriMeaning;
+import airline.controller.ControllerUtil.GenericUriMeaning;
 import airline.dto.MessageDTO;
 import airline.dto.TicketDTO;
 import airline.dto.UserDTO;
@@ -30,26 +29,17 @@ public class UserController extends HttpServlet {
 		
 		//URI check:
 		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
 		
-		//firt query check
-		String query = request.getParameter("search");
-		if(query != null) {
-			doFindOne(query, request, response);
-			return;
-		}
-		
-		//then rest of the uri check
-		UserUriMeaning uriResult = ControllerUtil.checkUserURI(uri);
-		
-		switch(uriResult) {
-			case ALL:
+		switch(uriMeaning) {
+			case USER_ALL:
 				doGetAll(request, response);
 				break;
-			case ONE:
+			case USER_ONE:
 				doGetOne(ControllerUtil.userId, request, response);
 				break;
 			case ERROR:
-				MessageDTO message = new MessageDTO("error", ControllerUtil.userErrorMessage);
+				MessageDTO message = new MessageDTO("error", "uri error");
 				ObjectMapper mapper = new ObjectMapper();
 				String jsonData = mapper.writeValueAsString(message);
 				response.setContentType("application/json;charset=UTF-8");
@@ -58,6 +48,9 @@ public class UserController extends HttpServlet {
 			case USER_TICKETS:
 				doGetTickets(ControllerUtil.userId, request, response);
 				break;	
+			case USER_SEARCH:
+				doFindOne(ControllerUtil.userSearchQuery, request, response);
+				break;
 			}
 		
 		

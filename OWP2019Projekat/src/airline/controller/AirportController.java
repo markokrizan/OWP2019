@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import airline.controller.ControllerUtil.GenericUriMeaning;
 import airline.dto.AirportDTO;
 import airline.dto.MessageDTO;
 import airline.model.Airport;
@@ -48,30 +49,23 @@ public class AirportController extends HttpServlet {
 		
 		//URI check:
 		String uri = request.getRequestURI();
-		Integer lastSlashIndex = uri.lastIndexOf('/');
-		String lastUriPart = uri.substring(lastSlashIndex + 1, uri.length());
-
-		
-		try {
-			Integer id = Integer.parseInt(lastUriPart);
-			doGetOne(id, request, response);
-			return;
-		}catch (NumberFormatException e) {
-			if(lastUriPart.equals("airport")){
-				doGetAll(request, response);
-				return;
-			}else {
-				MessageDTO message = new MessageDTO("error", e.getMessage());
-				ObjectMapper mapper = new ObjectMapper();
-				String jsonData = mapper.writeValueAsString(message);
-				response.setContentType("application/json");
-				response.getWriter().write(jsonData);	
-				return;
-			}
-		
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case AIRPORT_ALL:
+			doGetAll(request, response);
+			break;
+		case AIRPORT_ONE:
+			doGetOne(ControllerUtil.airportId, request, response);
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.getWriter().write(jsonData);	
+			break;
 		}
 		
-		//------------------------------------------------
+		
 		
 
 		
@@ -208,8 +202,6 @@ public class AirportController extends HttpServlet {
 				
 				
 		//------------------------------
-		
-		
 		BufferedReader reader = request.getReader();
 		ObjectMapper mapper = new ObjectMapper();
 		AirportDTO airportDTO = mapper.readValue(reader, AirportDTO.class);
