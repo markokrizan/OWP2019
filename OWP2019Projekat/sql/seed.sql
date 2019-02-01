@@ -49,13 +49,13 @@ INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, 
 
 #Future:
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
-	VALUES('b1', '2019-03-01 20:45:00', '2019-01-02 06:00:00', 1, 2, 20, 1090.50, 0);
+	VALUES('b1', '2019-03-01 20:45:00', '2019-04-02 06:00:00', 1, 2, 20, 1090.50, 0);
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
-	VALUES('b2', '2019-03-02 20:45:00', '2019-01-05 06:00:00', 2, 1, 20, 1200.50, 0);
+	VALUES('b2', '2019-04-03 20:45:00', '2019-04-04 06:00:00', 2, 1, 20, 1200.50, 0);
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
-	VALUES('b3', '2019-03-04 20:45:00', '2019-02-05 06:00:00', 3, 4, 20, 900.00, 0);
+	VALUES('b3', '2019-03-04 20:45:00', '2019-04-05 06:00:00', 3, 4, 20, 900.00, 0);
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
-	VALUES('b4', '2019-03-05 20:45:00', '2019-03-05 06:00:00', 4, 3, 20, 350.49, 0);
+	VALUES('b4', '2019-04-06 20:45:00', '2019-04-07 06:00:00', 4, 3, 20, 350.49, 0);
 INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)
 	VALUES('b5', '2019-04-04 20:45:00', '2019-04-05 06:00:00', 4, 5, 20, 599.99, 0);
     

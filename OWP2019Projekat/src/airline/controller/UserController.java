@@ -2,6 +2,8 @@ package airline.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -142,17 +144,42 @@ public class UserController extends HttpServlet {
 		//------------------------------
 		
 		//Uri check --------------------
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
 		
+		switch(uriMeaning) {
+			case USER_CREATE:
+				BufferedReader reader = request.getReader();
+				ObjectMapper mapper = new ObjectMapper();
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				mapper.setDateFormat(df);
+				UserDTO userDTO = mapper.readValue(reader, UserDTO.class);
+				doCreateUser(userDTO, request, response);
+				break;
+			case ERROR:
+				MessageDTO message = new MessageDTO("error", "uri error");
+				mapper = new ObjectMapper();
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json;charset=UTF-8");
+				response.getWriter().write(jsonData);
+				break;
+			
+			}
 		
 		
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
+		
+	
+		
+	
+	}
+	
+	protected void doCreateUser(UserDTO uDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		UserDTO userDTO = mapper.readValue(reader, UserDTO.class);
 		User insertedUser;
 
-		insertedUser = UserService.create(User.userFromDTO(userDTO));
+		insertedUser = UserService.create(User.userFromDTO(uDTO));
 		if(insertedUser != null) {
 			String jsonData = mapper.writeValueAsString(new UserDTO(insertedUser));
 			response.setContentType("application/json;charset=UTF-8");
@@ -165,9 +192,6 @@ public class UserController extends HttpServlet {
 			response.setStatus(500);
 			response.getWriter().write(jsonData);	
 		}
-	
-		
-	
 	}
 	
 	@Override
@@ -180,20 +204,43 @@ public class UserController extends HttpServlet {
 		//------------------------------
 		
 		//Uri check --------------------
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
 		
+		switch(uriMeaning) {
+			case USER_UPDATE:
+				BufferedReader reader = request.getReader();
+				ObjectMapper mapper = new ObjectMapper();
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				mapper.setDateFormat(df);
+				UserDTO userDTO = mapper.readValue(reader, UserDTO.class);
+				doUpdateUser(userDTO, request, response);
+				break;
+			case ERROR:
+				MessageDTO message = new MessageDTO("error", "uri error");
+				mapper = new ObjectMapper();
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json;charset=UTF-8");
+				response.getWriter().write(jsonData);
+				break;
+			
+			}
 		
 		
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
-		ObjectMapper mapper = new ObjectMapper();
-		UserDTO userDTO = mapper.readValue(reader, UserDTO.class);
-		
-		
-		User changedUser;
+	
 		
 	
-		changedUser = UserService.update(User.userFromDTO(userDTO));
+		
+	}
+	
+	protected void doUpdateUser(UserDTO dto, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		User changedUser;
+		
+		
+		changedUser = UserService.update(User.userFromDTO(dto));
 		if(changedUser != null) {
 			String jsonData = mapper.writeValueAsString(new UserDTO(changedUser));
 			response.setContentType("application/json;charset=UTF-8");
@@ -206,9 +253,6 @@ public class UserController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-		
-		
-		
 	}
 
 	@Override

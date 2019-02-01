@@ -2,6 +2,8 @@ package airline.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -14,9 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import airline.controller.ControllerUtil.GenericUriMeaning;
 import airline.dto.MessageDTO;
 import airline.dto.TicketDTO;
-
 import airline.model.Ticket;
-
 import airline.service.TicketService;
 
 /**
@@ -119,7 +119,10 @@ public class TicketController extends HttpServlet {
 		case TICKET_CREATE:
 			reader = request.getReader();
 			mapper = new ObjectMapper();
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			mapper.setDateFormat(df);
 			TicketDTO ticketDTO = mapper.readValue(reader, TicketDTO.class);
+			
 			doCreate(ticketDTO, request, response);
 			break;
 		case ERROR:
@@ -178,6 +181,8 @@ public class TicketController extends HttpServlet {
 		case TICKET_UPDATE:
 			reader = request.getReader();
 			mapper = new ObjectMapper();
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			mapper.setDateFormat(df);
 			TicketDTO ticketDTO = mapper.readValue(reader, TicketDTO.class);
 			doUpdate(ticketDTO, request, response);
 			break;

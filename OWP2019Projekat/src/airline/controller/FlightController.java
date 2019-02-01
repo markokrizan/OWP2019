@@ -2,6 +2,8 @@ package airline.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -232,6 +234,8 @@ public class FlightController extends HttpServlet {
 			case FLIGHT_CREATE:
 				reader = request.getReader();
 				mapper = new ObjectMapper();
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				mapper.setDateFormat(df);
 				FlightDTO flightDTO = mapper.readValue(reader, FlightDTO.class);
 				doCreateFlight(flightDTO, request, response);
 				return;
@@ -247,6 +251,7 @@ public class FlightController extends HttpServlet {
 		
 		ObjectMapper mapper = null;
 		Flight insertedFlight;
+		
 
 		insertedFlight = FlightService.create(Flight.flightFromDTO(fDTO));
 		if(insertedFlight != null) {
@@ -286,6 +291,8 @@ public class FlightController extends HttpServlet {
 			case FLIGHT_UPDATE:
 				BufferedReader reader = request.getReader();
 				mapper = new ObjectMapper();
+				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				mapper.setDateFormat(df);
 				FlightDTO flightDTO = mapper.readValue(reader, FlightDTO.class);
 				doUpdate(flightDTO, request, response);
 				return;

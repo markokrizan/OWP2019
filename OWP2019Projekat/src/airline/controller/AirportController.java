@@ -2,6 +2,8 @@ package airline.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import airline.controller.ControllerUtil.GenericUriMeaning;
 import airline.dto.AirportDTO;
 import airline.dto.MessageDTO;
+import airline.dto.TicketDTO;
 import airline.model.Airport;
 import airline.model.User;
 import airline.model.User.Role;
@@ -116,17 +119,45 @@ public class AirportController extends HttpServlet {
 		//------------------------------
 		
 		//Uri check --------------------
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case AIRPORT_CREATE:
+			BufferedReader reader = request.getReader();
+			ObjectMapper mapper = new ObjectMapper();
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			mapper.setDateFormat(df);
+			AirportDTO aDTO = mapper.readValue(reader, AirportDTO.class);
+			
+			doCreateAirport(aDTO, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
 		
+		}
 		
 		
 		//------------------------------
+
+
 		
-		BufferedReader reader = request.getReader();
+	
+		
+		
+		
+		
+	}
+	
+	protected void doCreateAirport(AirportDTO aDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		AirportDTO airportDTO = mapper.readValue(reader, AirportDTO.class);
 		Airport insertedAirport;
 
-		insertedAirport = AirportService.create(Airport.AirportFromDTO(airportDTO));
+		insertedAirport = AirportService.create(Airport.AirportFromDTO(aDTO));
 		if(insertedAirport != null) {
 			String jsonData = mapper.writeValueAsString(new AirportDTO(insertedAirport));
 			response.setContentType("application/json;charset=UTF-8");
@@ -139,11 +170,6 @@ public class AirportController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-	
-		
-		
-		
-		
 	}
 	
 	@Override
@@ -156,20 +182,47 @@ public class AirportController extends HttpServlet {
 		//------------------------------
 				
 		//Uri check --------------------
-				
+			
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case AIRPORT_CREATE:
+			BufferedReader reader = request.getReader();
+			ObjectMapper mapper = new ObjectMapper();
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			mapper.setDateFormat(df);
+			AirportDTO aDTO = mapper.readValue(reader, AirportDTO.class);
+			
+			doUpdateAirport(aDTO, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
+		
+		}
 				
 				
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
-		ObjectMapper mapper = new ObjectMapper();
-		AirportDTO airportDTO = mapper.readValue(reader, AirportDTO.class);
 		
 		
-		Airport changedAirport;
+		
 		
 	
-		changedAirport = AirportService.update(Airport.AirportFromDTO(airportDTO));
+	
+	
+	}
+	
+	protected void doUpdateAirport(AirportDTO aDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		Airport changedAirport;
+		
+		
+		changedAirport = AirportService.update(Airport.AirportFromDTO(aDTO));
 		if(changedAirport != null) {
 			String jsonData = mapper.writeValueAsString(new AirportDTO(changedAirport));
 			response.setContentType("application/json;charset=UTF-8");
@@ -182,9 +235,6 @@ public class AirportController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-	
-	
-	
 	}
 
 	@Override

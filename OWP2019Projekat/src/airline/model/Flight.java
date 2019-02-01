@@ -41,6 +41,9 @@ public class Flight {
 	}
 	
 	public static Flight flightFromDTO(FlightDTO flightDTO) {
+		if(flightDTO == null) {
+			return null;
+		}
 		Flight newFlight = new Flight();
 		newFlight.setId(flightDTO.getId());
 		newFlight.setNumber(flightDTO.getNumber());

@@ -1,6 +1,13 @@
 package airline.controller;
 
+import java.io.BufferedReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import airline.dto.TicketDTO;
 
 public class ControllerUtil {
 	
@@ -126,6 +133,7 @@ public class ControllerUtil {
 							return GenericUriMeaning.FLIGHT_OCCUPIED_SEATS;
 						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("returning")) {
 							//returnign flight for flight id:
+							flightId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.FLIGHT_RETURNING;
 						}
 						else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("departureAirport")) {
@@ -240,6 +248,9 @@ public class ControllerUtil {
 		
 		
 	}
+	
+	
+	
 	
 	
 	

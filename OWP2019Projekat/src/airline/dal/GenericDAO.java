@@ -317,9 +317,15 @@ public class GenericDAO {
 				Ticket paramObject = (Ticket)object;
 				
 				pstmt.setInt(1, paramObject.getDepartureFlight().getId());
-				pstmt.setInt(2, paramObject.getArrivalFlight().getId());
+				//optional arrival flight number and its seat:
+				if(paramObject.getArrivalFlight() != null) {
+					pstmt.setInt(2, paramObject.getArrivalFlight().getId());
+					pstmt.setInt(4, paramObject.getArrivalFlightSeatNumber());
+				}else {
+					pstmt.setObject(2, null);
+					pstmt.setObject(4, null);
+				}
 				pstmt.setInt(3, paramObject.getDepartureFlightSeatNumber());
-				pstmt.setInt(4, paramObject.getArrivalFlightSeatNumber());
 				pstmt.setObject(5, paramObject.getReservationDate());
 				pstmt.setObject(6, paramObject.getTicketSaleDate());
 				pstmt.setInt(7, paramObject.getUser().getId());
