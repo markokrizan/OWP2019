@@ -24,8 +24,8 @@ public class AirportService {
 		return AirportDAO.update(airport);
 	}
 	
-	public static Airport delete(Airport airport){
-		return AirportDAO.delete(airport);
+	public static Boolean delete(Integer airportId){
+		return AirportDAO.delete(airportId);
 	}
 	
 

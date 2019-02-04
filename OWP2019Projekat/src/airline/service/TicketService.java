@@ -27,8 +27,8 @@ public class TicketService {
 		return TicketDAO.update(ticket);
 	}
 	
-	public static Ticket delete(Ticket ticket){
-		return TicketDAO.delete(ticket);
+	public static Boolean delete(Integer ticketId){
+		return TicketDAO.delete(ticketId);
 	}
 
 }

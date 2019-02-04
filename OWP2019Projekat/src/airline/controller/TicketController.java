@@ -237,23 +237,40 @@ public class TicketController extends HttpServlet {
 		//------------------------------
 				
 		//Uri check --------------------
-				
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case TICKET_DELETE:
+			doDeleteTicket(ControllerUtil.ticketId, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
+		
+		}
 				
 				
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
+		
+
+	}
+	
+	protected void doDeleteTicket(Integer ticketId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		TicketDTO ticketDTO = mapper.readValue(reader, TicketDTO.class);
+	
+		System.out.println("USAO U DELETE METODU, ID JE: " + ticketId);
 		
-		Ticket ticketForDeletion;
-		
-		
-		ticketForDeletion = TicketService.delete(Ticket.ticketFromDTO(ticketDTO));
-		if(ticketForDeletion != null) {
-			String jsonData = mapper.writeValueAsString(new TicketDTO(ticketForDeletion));
+		Boolean successfullDeletion = TicketService.delete(ticketId);
+		if(successfullDeletion == true) {
+			MessageDTO message = new MessageDTO("success", "succesfull_deletion");
+			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json;charset=UTF-8");
-			response.setStatus(201);
+			response.setStatus(200);
 			response.getWriter().write(jsonData);
 		}else {
 			MessageDTO message = new MessageDTO("error", "processing_error");
@@ -262,7 +279,6 @@ public class TicketController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-
 	}
 	
 	

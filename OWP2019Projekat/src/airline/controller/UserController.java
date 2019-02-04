@@ -266,21 +266,41 @@ public class UserController extends HttpServlet {
 		//------------------------------
 		
 		//Uri check --------------------
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case USER_DELETE:
+			doDeleteUser(ControllerUtil.userId, request, response);
+			break;
+		case USER_BLOCK:
+			doBlockUser(ControllerUtil.userId, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
+		
+		}
 		
 		
 		
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
+		
+		
+	}
+	
+	protected void doDeleteUser(Integer userId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		ObjectMapper mapper = new ObjectMapper();
-		UserDTO userDTO = mapper.readValue(reader, UserDTO.class);
-		
-		User userForDeletion;
-		
-		
-		userForDeletion = UserService.delete(User.userFromDTO(userDTO));
-		if(userForDeletion != null) {
-			String jsonData = mapper.writeValueAsString(new UserDTO(userForDeletion));
+	
+		Boolean succesfullDeletion = UserService.delete(userId);
+		if(succesfullDeletion == true) {
+			MessageDTO message = new MessageDTO("success", "successfull_deletion");
+			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
@@ -291,9 +311,28 @@ public class UserController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-		
 	}
+	
+	protected void doBlockUser(Integer userId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
 
+		User userForDeletion;
+		
+		Boolean successfullBlock = UserService.block(userId);
+		if(successfullBlock == true) {
+			MessageDTO message = new MessageDTO("error", "successfull_block");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(201);
+			response.getWriter().write(jsonData);
+		}else {
+			MessageDTO message = new MessageDTO("error", "processing_error");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);	
+		}
+	}
 
 	
 	

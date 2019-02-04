@@ -46,7 +46,7 @@ private static final Table table = Table.USER;
 	public static User update(User user){
 		if(user != null) {
 			try {
-				return (User)GenericDAO.insert(table, user);
+				return (User)GenericDAO.update(table, user);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -57,17 +57,31 @@ private static final Table table = Table.USER;
 		}
 	}
 	
-	public static User delete(User user){
-		if(user != null) {
+	public static Boolean delete(Integer userId){
+		if(userId != null) {
 			try {
-				return (User)GenericDAO.delete(table, user);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				return GenericDAO.delete(table, userId);
+			}catch(SQLException e){
 				e.printStackTrace();
-				return null;
+				return false;
 			}
+			
 		}else {
-			return null;
+			return false;
+		}
+	}
+	
+	public static Boolean block(Integer userId){
+		if(userId != null) {
+			try {
+				return GenericDAO.blockUser(userId);
+			}catch(SQLException e){
+				e.printStackTrace();
+				return false;
+			}
+			
+		}else {
+			return false;
 		}
 	}
 	

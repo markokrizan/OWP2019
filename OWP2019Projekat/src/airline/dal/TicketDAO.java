@@ -45,7 +45,7 @@ public class TicketDAO {
 	public static Ticket update(Ticket ticket){
 		if(ticket != null) {
 			try {
-				return (Ticket)GenericDAO.insert(table, ticket);
+				return (Ticket)GenericDAO.update(table, ticket);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -56,17 +56,17 @@ public class TicketDAO {
 		}
 	}
 	
-	public static Ticket delete(Ticket ticket){
-		if(ticket != null) {
+	public static Boolean delete(Integer ticketId){
+		if(ticketId != null) {
 			try {
-				return (Ticket)GenericDAO.delete(table, ticket);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				return GenericDAO.delete(table, ticketId);
+			}catch(SQLException e){
 				e.printStackTrace();
-				return null;
+				return false;
 			}
+			
 		}else {
-			return null;
+			return false;
 		}
 	}
 

@@ -28,8 +28,12 @@ public class UserService {
 		return UserDAO.update(user);
 	}
 	
-	public static User delete(User user){
-		return UserDAO.delete(user);
+	public static Boolean delete(Integer userId){
+		return UserDAO.delete(userId);
+	}
+	
+	public static Boolean block(Integer userId){
+		return UserDAO.block(userId);
 	}
 	
 	public static ArrayList<User> findOne(String query){

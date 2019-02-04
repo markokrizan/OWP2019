@@ -17,7 +17,9 @@ import airline.controller.ControllerUtil.GenericUriMeaning;
 import airline.dto.FlightDTO;
 import airline.dto.MessageDTO;
 import airline.dto.SearchFlightDTO;
+import airline.dto.TicketDTO;
 import airline.model.Flight;
+import airline.model.Ticket;
 import airline.service.FlightService;
 
 /**
@@ -69,6 +71,9 @@ public class FlightController extends HttpServlet {
 		case FLIGHT_RETURNING:
 			doGetReturning(ControllerUtil.flightId, request, response);
 			break;
+		case FLIGHT_TICKETS:
+			doGetTickets(ControllerUtil.flightId, request, response);
+			break;
 		case FLIGHT_OCCUPIED_SEATS:
 			doGetOccupiedSeats(ControllerUtil.flightId, request, response);
 			break;
@@ -87,8 +92,24 @@ public class FlightController extends HttpServlet {
 		
 	}
 	
+	protected void doGetTickets(Integer flightId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ArrayList<Ticket> tickets = FlightService.getTickets(flightId);
+		if(tickets != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(TicketDTO.toDTO(tickets));
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);	
+		}else {
+			MessageDTO message = new MessageDTO("error", "processing_error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);	
+		}
+	}
+	
 	protected void doGetOccupiedSeats(Integer flightId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println(flightId);
+		
 		ArrayList<Integer> seats = FlightService.getOccupiedSeats(flightId);
 		System.out.println(seats);
 		if(seats != null) {
@@ -336,21 +357,35 @@ public class FlightController extends HttpServlet {
 		//------------------------------
 				
 		//Uri check --------------------
-				
-				
-				
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case FLIGHT_DELETE:
+			doDeleteFlight(ControllerUtil.flightId, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
+		
+		}		
 		//------------------------------
 		
-		BufferedReader reader = request.getReader();
+		
+		
+	}
+	
+	protected void doDeleteFlight(Integer flightId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		FlightDTO flightDTO = mapper.readValue(reader, FlightDTO.class);
+
 		
-		Flight flightForDeletion;
-		
-		
-		flightForDeletion = FlightService.delete(Flight.flightFromDTO(flightDTO));
-		if(flightForDeletion != null) {
-			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(flightForDeletion));
+		Boolean successfullDeletion = FlightService.delete(flightId);
+		if(successfullDeletion == true) {
+			MessageDTO message = new MessageDTO("success", "succesfull_deletion");
+			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
@@ -361,7 +396,6 @@ public class FlightController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-		
 	}
 	
 	

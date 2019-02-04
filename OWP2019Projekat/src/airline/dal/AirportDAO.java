@@ -55,16 +55,17 @@ public class AirportDAO {
 		}
 	}
 	
-	public static Airport delete(Airport airport){
-		if(airport != null) {
+	public static Boolean delete(Integer airportId){
+		if(airportId != null) {
 			try {
-				return (Airport)GenericDAO.delete(table, airport);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				return null;
+				return GenericDAO.delete(table, airportId);
+			}catch(SQLException e){
+				e.printStackTrace();
+				return false;
 			}
+			
 		}else {
-			return null;
+			return false;
 		}
 	}
 	

@@ -8,6 +8,7 @@ import airline.dal.GenericDAO.Table;
 import airline.dto.SearchFlightDTO;
 import airline.model.Airport;
 import airline.model.Flight;
+import airline.model.Ticket;
 
 public class FlightDAO {
 	
@@ -29,6 +30,10 @@ public class FlightDAO {
 		return (ArrayList<Flight>)(List<?>)GenericDAO.getAll(table);
 
 		
+	}
+	
+	public static ArrayList<Ticket> getTickets(Integer flightId){
+		return GenericDAO.getFlightTickets(flightId);
 	}
 	
 
@@ -63,7 +68,7 @@ public class FlightDAO {
 	public static Flight update(Flight flight) {
 		if(flight != null) {
 			try {
-				return (Flight)GenericDAO.insert(table, flight);
+				return (Flight)GenericDAO.update(table, flight);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -74,17 +79,17 @@ public class FlightDAO {
 		}
 	}
 	
-	public static Flight delete(Flight flight)  {
-		if(flight != null) {
+	public static Boolean delete(Integer flightId){
+		if(flightId != null) {
 			try {
-				return (Flight)GenericDAO.delete(table, flight);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
+				return GenericDAO.delete(table, flightId);
+			}catch(SQLException e){
 				e.printStackTrace();
-				return null;
+				return false;
 			}
+			
 		}else {
-			return null;
+			return false;
 		}
 	}
 	

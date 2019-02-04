@@ -19,6 +19,7 @@ public class ControllerUtil {
 		AIRPORT_ONE,
 		AIRPORT_CREATE,
 		AIRPORT_UPDATE,
+		AIRPORT_DELETE,
 		
 		USER_ALL,
 		USER_ONE,
@@ -26,6 +27,8 @@ public class ControllerUtil {
 		USER_UPDATE,
 		USER_TICKETS,
 		USER_SEARCH,
+		USER_BLOCK,
+		USER_DELETE,
 		
 		FLIGHT_ALL,
 		FLIGHT_ONE,
@@ -37,11 +40,14 @@ public class ControllerUtil {
 		FLIGHT_RETURNING,
 		FLIGHT_DEPARTURE_AIRPORT,
 		FLIGHT_ARRIVAL_AIRPORT,
+		FLIGHT_TICKETS,
+		FLIGHT_DELETE,
 		
 		TICKET_ALL,
 		TICKET_ONE,
 		TICKET_CREATE,
-		TICKET_UPDATE
+		TICKET_UPDATE,
+		TICKET_DELETE
 		
 		
 	}
@@ -94,10 +100,20 @@ public class ControllerUtil {
 							return GenericUriMeaning.USER_CREATE;
 						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("update")) {
 							//update user:
+							//userId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.USER_UPDATE;
 						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("tickets")) {
 							//users subcollection: tickets
+							userId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.USER_TICKETS;
+						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("block")) {
+							//users subcollection: tickets
+							userId = parser(uriComponents.get("entityId"));
+							return GenericUriMeaning.USER_BLOCK;
+						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("delete")) {
+							//users subcollection: tickets
+							userId = parser(uriComponents.get("entityId"));
+							return GenericUriMeaning.USER_DELETE;
 						}else if(uriComponents.get("entityId").equals("search") && uriComponents.get("subcollection") != null) {
 							//users subcollection: tickets
 							userSearchQuery = uriComponents.get("subcollection");
@@ -121,26 +137,33 @@ public class ControllerUtil {
 							return GenericUriMeaning.FLIGHT_CREATE;
 						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("update")) {
 							//update flights:
+							flightId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.FLIGHT_UPDATE;
 						}else if(uriComponents.get("entityId").equals("search") && uriComponents.get("subcollection") == null) {
 							//search flights:
 							return GenericUriMeaning.FLIGHT_SEARCH;
+						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("delete")) {
+							flightId = parser(uriComponents.get("entityId"));
+							return GenericUriMeaning.FLIGHT_DELETE;
 						}else if(uriComponents.get("entityId").equals("current") && uriComponents.get("subcollection") == null) {
 							//search flights:
 							return GenericUriMeaning.FLIGHT_CURRENT;
 						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("occupied-seats")) {
 							//flight occuped seats:
+							flightId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.FLIGHT_OCCUPIED_SEATS;
+						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("tickets")) {
+							//flight occuped seats:
+							flightId = parser(uriComponents.get("entityId"));
+							return GenericUriMeaning.FLIGHT_TICKETS;
 						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("returning")) {
 							//returnign flight for flight id:
 							flightId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.FLIGHT_RETURNING;
-						}
-						else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("departureAirport")) {
+						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("departureAirport")) {
 							//returnign flight for flight id:
 							return GenericUriMeaning.FLIGHT_DEPARTURE_AIRPORT;
-						}
-						else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("arrivalAirport")) {
+						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("arrivalAirport")) {
 							//returnign flight for flight id:
 							return GenericUriMeaning.FLIGHT_ARRIVAL_AIRPORT;
 						}else {
@@ -162,7 +185,12 @@ public class ControllerUtil {
 							return GenericUriMeaning.TICKET_CREATE;
 						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("update")) {
 							//update ticket:
+							ticketId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.TICKET_UPDATE;
+							
+						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("delete")) {
+							ticketId = parser(uriComponents.get("entityId"));
+							return GenericUriMeaning.TICKET_DELETE;
 						}else {
 							return GenericUriMeaning.ERROR;
 						}
@@ -183,6 +211,10 @@ public class ControllerUtil {
 							return GenericUriMeaning.AIRPORT_CREATE;
 						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("update")) {
 							//update airport:
+							return GenericUriMeaning.AIRPORT_UPDATE;
+						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("delete")) {
+							//update airport:
+							airportId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.AIRPORT_UPDATE;
 						}else {
 							return GenericUriMeaning.ERROR;

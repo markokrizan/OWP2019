@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import airline.dal.FlightDAO;
 import airline.dto.SearchFlightDTO;
 import airline.model.Flight;
+import airline.model.Ticket;
 
 public class FlightService {
 	
@@ -20,6 +21,10 @@ public class FlightService {
 		return FlightDAO.getCurrent();
 	}
 	
+	public static ArrayList<Ticket> getTickets(Integer flightId){
+		return FlightDAO.getTickets(flightId);
+	}
+	
 	public static ArrayList<Integer> getOccupiedSeats(Integer flightId){
 		return FlightDAO.getOccupiedSeats(flightId);
 	}
@@ -32,8 +37,8 @@ public class FlightService {
 		return FlightDAO.update(flight);
 	}
 	
-	public static Flight delete(Flight flight){
-		return FlightDAO.delete(flight);
+	public static Boolean delete(Integer flightId){
+		return FlightDAO.delete(flightId);
 	}
 	
 	public static ArrayList<Flight> search(SearchFlightDTO sfdto){

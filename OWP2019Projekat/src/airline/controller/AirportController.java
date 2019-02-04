@@ -248,20 +248,37 @@ public class AirportController extends HttpServlet {
 		//------------------------------
 				
 		//Uri check --------------------
-				
+		String uri = request.getRequestURI();
+		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
+		switch(uriMeaning) {
+		case AIRPORT_DELETE:			
+			doDeleteAirport(ControllerUtil.airportId, request, response);
+			break;
+		case ERROR:
+			MessageDTO message = new MessageDTO("error", "uri error");
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.getWriter().write(jsonData);
+			break;
+		
+		}
 				
 				
 		//------------------------------
-		BufferedReader reader = request.getReader();
+		
+		
+		
+	}
+	
+	protected void doDeleteAirport(Integer airportId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		ObjectMapper mapper = new ObjectMapper();
-		AirportDTO airportDTO = mapper.readValue(reader, AirportDTO.class);
-		
-		Airport airportForDeletion;
-		
-		
-		airportForDeletion = AirportService.delete(Airport.AirportFromDTO(airportDTO));
-		if(airportForDeletion != null) {
-			String jsonData = mapper.writeValueAsString(new AirportDTO(airportForDeletion));
+	
+		Boolean succesfullDeletion = AirportService.delete(airportId);
+		if(succesfullDeletion == true) {
+			MessageDTO message = new MessageDTO("success", "successfull_deletion");
+			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(201);
 			response.getWriter().write(jsonData);
@@ -272,8 +289,6 @@ public class AirportController extends HttpServlet {
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
 		}
-		
-		
 	}
 
 	

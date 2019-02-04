@@ -478,9 +478,17 @@ public class GenericDAO {
 				Ticket paramObject = (Ticket)object;
 				
 				pstmt.setInt(1, paramObject.getDepartureFlight().getId());
-				pstmt.setInt(2, paramObject.getArrivalFlight().getId());
+				if(paramObject.getArrivalFlight() != null) {
+					pstmt.setInt(2, paramObject.getArrivalFlight().getId());
+					pstmt.setInt(4, paramObject.getArrivalFlightSeatNumber());
+				}else {
+					pstmt.setObject(2, null);
+					pstmt.setObject(4, null);
+				}
+				
 				pstmt.setInt(3, paramObject.getDepartureFlightSeatNumber());
-				pstmt.setInt(4, paramObject.getArrivalFlightSeatNumber());
+				
+				
 				pstmt.setObject(5, paramObject.getReservationDate());
 				pstmt.setObject(6, paramObject.getTicketSaleDate());
 				pstmt.setInt(7, paramObject.getUser().getId());
@@ -525,32 +533,100 @@ public class GenericDAO {
 	
 	//delete - only logical
 	//redudandant a bit!
-	public static Object delete(Table table, Object object) throws SQLException {
+	public static Boolean delete(Table table, Integer id) throws SQLException {
+		
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		
+		String query = null;
+		
 		
 		if(table == Table.AIRPORT) {
-			Airport paramObject = (Airport)object;
-			paramObject.setDeleted(true);
-			return update(table, paramObject);
+			
+			query = "UPDATE Airport SET " +
+					"deleted = 1 " + 
+					
+					"WHERE airport_id = ?";
+			
+			
+			pstmt = conn.prepareStatement(query);	
+			pstmt.setInt(1, id);
+			
+			System.out.println(pstmt);
+			pstmt.executeUpdate();
+			return true;	
 			
 		}else if(table == Table.FLIGHT) {
-			Flight paramObject = (Flight)object;
-			paramObject.setDeleted(true);
-			return update(table, paramObject);
+			query = "UPDATE Flight SET " +
+					"deleted = 1 " + 
+					
+					"WHERE flight_id = ?";
+			
+			
+			pstmt = conn.prepareStatement(query);	
+			pstmt.setInt(1, id);
+			
+			System.out.println(pstmt);
+			pstmt.executeUpdate();
+			return true;	
 			
 		}else if(table == Table.TICKET) {
-			Ticket paramObject = (Ticket)object;
-			paramObject.setDeleted(true);
-			return update(table, paramObject);
+			
+			System.out.println("DOSAO U GENERIC DAO");
+			
+			query = "UPDATE Ticket SET " +
+					"deleted = 1 " + 
+					
+					"WHERE ticket_id = ?";
+			
+			
+			pstmt = conn.prepareStatement(query);	
+			pstmt.setInt(1, id);
+			
+			System.out.println(pstmt);
+			pstmt.executeUpdate();
+			return true;	
 			
 		}else if(table == Table.USER) {
 			
-			User paramObject = (User)object;
-			paramObject.setDeleted(true);
-			return update(table, paramObject);
+			query = "UPDATE User SET " +
+					"deleted = 1 " + 
+					
+					"WHERE user_id = ?";
+			
+			
+			pstmt = conn.prepareStatement(query);	
+			pstmt.setInt(1, id);
+			
+			System.out.println(pstmt);
+			pstmt.executeUpdate();
+			return true;	
 			
 		}else {
 			return false;
 		}
+	}
+	
+	
+	public static Boolean blockUser(Integer id) throws SQLException {
+		
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		
+		String query = null;
+		
+		query = "UPDATE User SET " +
+				"blocked = 1 " + 
+				
+				"WHERE user_id = ?";
+		
+		
+		pstmt = conn.prepareStatement(query);	
+		pstmt.setInt(1, id);
+		
+		System.out.println(pstmt);
+		pstmt.executeUpdate();
+		return true;	
 	}
 	
 	
@@ -834,11 +910,60 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM ticket WHERE user_id = ?;";
+			String query = "SELECT * FROM ticket WHERE user_id = ? AND deleted = 0;";
 			
 			pstmt = conn.prepareStatement(query);
 			
 			pstmt.setInt(1, userId);
+			
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				
+			
+				Integer ticketId = rset.getInt("ticket_id");
+				Flight departureFlight = (Flight)getOne(Table.FLIGHT, rset.getInt("departure_flight_id"));
+				Flight arrivalFlight = (Flight)getOne(Table.FLIGHT, rset.getInt("arrival_flight_id"));
+				Integer departureFlightSeatNo = rset.getInt("departure_flight_seat_no");
+				Integer arrrivalFlightSeatNo = rset.getInt("arrival_flight_seat_no");
+				Date reservationDate = rset.getDate("reservation_date");
+				Date saleDate = rset.getDate("sale_date");
+				User user = (User)getOne(Table.USER, rset.getInt("user_id"));
+				Boolean deleted = rset.getBoolean("deleted");
+				
+				tickets.add(new Ticket(ticketId, departureFlight, arrivalFlight, departureFlightSeatNo, arrrivalFlightSeatNo, 
+						reservationDate, saleDate, user, deleted));
+				
+				
+				
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return tickets;
+		
+		
+	}
+	
+	public static ArrayList<Ticket> getFlightTickets(Integer flightId) {
+		ArrayList<Ticket> tickets = new ArrayList<Ticket>();
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT * FROM ticket WHERE departure_flight_id = ?  OR arrival_flight_id = ?;";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			pstmt.setInt(1, flightId);
+			pstmt.setInt(2, flightId);
 			
 			System.out.println(pstmt);
 
@@ -883,7 +1008,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM flight WHERE departure_date >= NOW();";
+			String query = "SELECT * FROM flight WHERE departure_date >= NOW() AND deleted = 0;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -927,7 +1052,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM flight WHERE departure_airport_id IN (SELECT arrival_airport_id FROM flight WHERE flight_id = ? AND departure_date > NOW()) AND departure_date >= (SELECT arrival_date FROM flight WHERE flight_id = ? AND departure_date > NOW());";
+			String query = "SELECT * FROM flight WHERE departure_airport_id IN (SELECT arrival_airport_id FROM flight WHERE flight_id = ? AND departure_date > NOW()) AND departure_date >= (SELECT arrival_date FROM flight WHERE flight_id = ? AND departure_date > NOW() AND deleted = 0);";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -982,7 +1107,7 @@ public class GenericDAO {
 		
 		try {
 			
-			String query1 = "SELECT departure_flight_seat_no FROM ticket WHERE departure_flight_id = ?;";
+			String query1 = "SELECT departure_flight_seat_no FROM ticket WHERE departure_flight_id = ? AND deleted = 0;";
 			
 			pstmt1 = conn.prepareStatement(query1);
 			pstmt1.setInt(1, flight);
@@ -991,7 +1116,7 @@ public class GenericDAO {
 			System.out.println(pstmt1);
 			
 			
-			String query2 = "SELECT arrival_flight_seat_no FROM ticket WHERE arrival_flight_id = ?;";
+			String query2 = "SELECT arrival_flight_seat_no FROM ticket WHERE arrival_flight_id = ? AND deleted = 0;";
 			
 			pstmt2 = conn.prepareStatement(query2);
 			pstmt2.setInt(1, flight);
