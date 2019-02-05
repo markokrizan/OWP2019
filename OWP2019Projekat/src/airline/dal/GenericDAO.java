@@ -1223,6 +1223,45 @@ public class GenericDAO {
 		
 	}
 	
+	public static Boolean checkFlightExistance(Integer flightId) {
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT flight_id FROM flight WHERE id = ?;";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			pstmt.setInt(1, flightId);
+	
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return false;
+			}else {
+				return true;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return null;
+	}
+	
+	public static Boolean checkFlightSeatAvailibility(Integer flightId, Integer seatNo) {
+		ArrayList<Integer> occupiedSeats =  getOccupiedSeats(flightId);
+		if(occupiedSeats.contains(seatNo)) {
+			return false;
+		}else {
+			return true;
+		}
+	}
 	
 	
 	

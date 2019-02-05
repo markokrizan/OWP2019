@@ -20,7 +20,36 @@ public class FlightValidator {
 	
 
 	public static String validate(FlightDTO fDTO){
+		
+		
 		String validationMessage = "";
+		
+		//check nulls or empty:
+		
+		if(fDTO.getNumber() == null || fDTO.getNumber().equals("")){
+			validationMessage += "Provide flight number!\n";
+		}
+		if(fDTO.getDeparture() == null){
+			validationMessage += "Provide departure date!\n";
+		}
+		if(fDTO.getArrival() == null){
+			validationMessage += "Provide arrival date!\n";
+		}
+		if(fDTO.getFlyingFrom() == null){
+			validationMessage += "Provide departure airport!\n";
+		}
+		if(fDTO.getFlyingTo() == null){
+			validationMessage += "Provide arrival airport!\n";
+		}
+		if(fDTO.getNumberOfSeats() == null){
+			validationMessage += "Provide nubmer of seats!\n";
+		}
+		if(fDTO.getPrice() == null) {
+			validationMessage += "Provide price!\n";
+		}
+		
+	
+		//=====================================
 		
 		if(fDTO.getId() != null) {
 			validationMessage += "Do not provide an id!\n";
@@ -36,9 +65,14 @@ public class FlightValidator {
 		if(fDTO.getDeparture().before(new Date())) {
 			validationMessage += "Departure date must be greater than today!\n";
 		}
+		
+		//check if date in right format:
+		
 		if(fDTO.getArrival().before(fDTO.getDeparture())) {
 			validationMessage += "Arrival date must be after departure date!\n";
 		}
+		
+		//check if date in right format:
 		
 		Boolean validDepartureFlight = AirportService.checkAirportAvailibility(fDTO.getFlyingFrom().getId());
 		if(validDepartureFlight == null) {

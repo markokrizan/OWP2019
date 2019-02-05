@@ -104,6 +104,14 @@ public class FlightDAO {
 	public static Boolean checkAvailibleNumber(String newNumber){
 		return GenericDAO.checkAvailibleFlightNumber(newNumber);
 	}
+	
+	public static Boolean checkIfExists(Integer flightId) {
+		return GenericDAO.checkFlightExistance(flightId);
+	}
+	
+	public static Boolean checkSeatAvailibility(Integer flightId, Integer seatNo) {
+		return GenericDAO.checkFlightSeatAvailibility(flightId, seatNo);
+	}
 
 }
 

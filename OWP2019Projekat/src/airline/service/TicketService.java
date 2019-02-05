@@ -3,7 +3,7 @@ package airline.service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
+import airline.dal.FlightDAO;
 import airline.dal.TicketDAO;
 import airline.model.Ticket;
 
@@ -30,5 +30,14 @@ public class TicketService {
 	public static Boolean delete(Integer ticketId){
 		return TicketDAO.delete(ticketId);
 	}
+	
+	public static Boolean checkFLight(Integer flightId) {
+		return FlightDAO.checkIfExists(flightId);
+	}
+	
+	public static Boolean checkSeatAvailibility(Integer flightId, Integer seatNo) {
+		return FlightDAO.checkSeatAvailibility(flightId, seatNo);
+	}
+	
 
 }

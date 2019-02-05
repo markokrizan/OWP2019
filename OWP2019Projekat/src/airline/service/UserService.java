@@ -5,11 +5,16 @@ import java.util.ArrayList;
 import airline.dal.UserDAO;
 import airline.model.Ticket;
 import airline.model.User;
+import airline.security.AuthDAO;
 
 public class UserService {
 	
 	public static User getOne(Integer id) {
 		return UserDAO.getOne(id);
+	}
+	
+	public static User findByUserName(String username) {
+		return AuthDAO.getOne(username);
 	}
 	
 	public static ArrayList<User> getAll(){
