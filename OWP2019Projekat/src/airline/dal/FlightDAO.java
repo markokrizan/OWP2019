@@ -100,5 +100,10 @@ public class FlightDAO {
 
 		
 	}
+	
+	public static Boolean checkAvailibleNumber(String newNumber){
+		return GenericDAO.checkAvailibleFlightNumber(newNumber);
+	}
 
 }
+

@@ -69,6 +69,10 @@ public class AirportDAO {
 		}
 	}
 	
+	public static Boolean checkAirportAvailibility(Integer airportId) {
+		return GenericDAO.checkAirportAvailibility(airportId);
+	}
+	
 	
 	
 	

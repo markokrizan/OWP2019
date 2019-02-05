@@ -802,9 +802,9 @@ public class GenericDAO {
 			try {
 				query = "SELECT * FROM user WHERE user_name LIKE ? OR role LIKE ?";
 				pstmt = conn.prepareStatement(query);
-				String q = SearchUserDTO.class.cast(o).getQuery();
-				pstmt.setString(1, q);
-				pstmt.setString(2, q);
+				System.out.println("Query object: " + o.toString());
+				pstmt.setString(1, o.toString());
+				pstmt.setString(2, o.toString());
 				return pstmt;
 			}catch(SQLException ex) {System.out.println("Error in query!");}
 			break;
@@ -827,7 +827,7 @@ public class GenericDAO {
 		
 		System.out.println(conn);
 		
-		if(o == null){
+		if(o == null || o.toString().equals("") || o.toString() == null){
 			return getAll(table);
 		}
 		
@@ -1150,6 +1150,76 @@ public class GenericDAO {
 		
 		return occupiedSeats;
 		
+		
+	}
+	
+	public static Boolean checkAvailibleFlightNumber(String newNumber) {
+		//SELECT number FROM flight WHERE number LIKE 'a1';
+
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT number FROM flight WHERE number LIKE ?;";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			pstmt.setString(1, newNumber);
+	
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return false;
+			}else {
+				return true;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return null;
+		
+	}
+	
+
+	
+	public static Boolean checkAirportAvailibility(Integer airportId) {
+		//SELECT number FROM flight WHERE number LIKE 'a1';
+
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT airport_id FROM airport WHERE id = ?;";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			pstmt.setInt(1, airportId);
+	
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			if (rset.next()) {
+				return false;
+			}else {
+				return true;
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return null;
 		
 	}
 	

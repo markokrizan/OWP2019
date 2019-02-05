@@ -49,6 +49,11 @@ public class FlightService {
 		return FlightDAO.returning(flightId);
 	}
 	
+	public static Boolean checkAvailibleNumber(String newNumber){
+		return FlightDAO.checkAvailibleNumber(newNumber);
+		
+	}
+	
 	
 
 }

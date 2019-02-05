@@ -114,8 +114,8 @@ public class ControllerUtil {
 							//users subcollection: tickets
 							userId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.USER_DELETE;
-						}else if(uriComponents.get("entityId").equals("search") && uriComponents.get("subcollection") != null) {
-							//users subcollection: tickets
+						}else if(uriComponents.get("entityId").equals("search")) {
+							//http://localhost:8080/airline/user/search/something or empty
 							userSearchQuery = uriComponents.get("subcollection");
 							return GenericUriMeaning.USER_SEARCH;
 						}else {

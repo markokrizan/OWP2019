@@ -28,6 +28,10 @@ public class AirportService {
 		return AirportDAO.delete(airportId);
 	}
 	
+	public static Boolean checkAirportAvailibility(Integer airportId) {
+		return AirportDAO.checkAirportAvailibility(airportId);
+	}
+	
 
 
 }
