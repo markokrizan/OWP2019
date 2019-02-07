@@ -1197,7 +1197,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT airport_id FROM airport WHERE id = ?;";
+			String query = "SELECT airport_id FROM airport WHERE airport_id = ?;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -1207,9 +1207,9 @@ public class GenericDAO {
 
 			rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return false;
-			}else {
 				return true;
+			}else {
+				return false;
 			}
 		} catch (SQLException ex) {
 			System.out.println("Greska u SQL upitu!");
@@ -1262,6 +1262,8 @@ public class GenericDAO {
 			return true;
 		}
 	}
+	
+
 	
 	
 	

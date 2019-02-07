@@ -95,5 +95,7 @@ private static final Table table = Table.USER;
 	public static ArrayList<Ticket> getTickets(Integer userId) {
 		return GenericDAO.getUserTickets(userId);
 	}
+	
+	
 
 }

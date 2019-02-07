@@ -77,15 +77,15 @@ public class FlightValidator {
 		Boolean validDepartureFlight = AirportService.checkAirportAvailibility(fDTO.getFlyingFrom().getId());
 		if(validDepartureFlight == null) {
 			validationMessage += "Error checking departure airport availability!\\n";
-		}else if(!numberAvailability) {
+		}else if(!validDepartureFlight) {
 			validationMessage += "Departure airport not available!\n";
 		}
 		
-		Boolean validArrivalAirport = AirportService.checkAirportAvailibility(fDTO.getFlyingFrom().getId());
+		Boolean validArrivalAirport = AirportService.checkAirportAvailibility(fDTO.getFlyingTo().getId());
 		if(validArrivalAirport == null) {
 			validationMessage += "Error checking arrival airport availability!\\n";
 		}else if(!validArrivalAirport) {
-			validationMessage += "Departure arrival not available!\n";
+			validationMessage += "Arrival airport not available!\n";
 		}
 		
 		if(fDTO.getNumberOfSeats() < 0 && fDTO.getNumberOfSeats() > 200) {

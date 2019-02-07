@@ -23,6 +23,7 @@ public class ControllerUtil {
 		
 		USER_ALL,
 		USER_ONE,
+		ROLES,
 		USER_CREATE,
 		USER_UPDATE,
 		USER_TICKETS,
@@ -98,7 +99,10 @@ public class ControllerUtil {
 						}else if(uriComponents.get("entityId").equals("create") && uriComponents.get("subcollection") == null) {
 							//create user:
 							return GenericUriMeaning.USER_CREATE;
-						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("update")) {
+						}else if(uriComponents.get("entityId").equals("roles") && uriComponents.get("subcollection") == null) {
+							//create user:
+							return GenericUriMeaning.ROLES;
+						}else if(uriComponents.get("entityId").equals("update") && uriComponents.get("subcollection") == null) {
 							//update user:
 							//userId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.USER_UPDATE;

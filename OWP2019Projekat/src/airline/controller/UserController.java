@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,11 +15,15 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import airline.controller.ControllerUtil.GenericUriMeaning;
+import airline.controller.validate.UserValidator;
 import airline.dto.MessageDTO;
 import airline.dto.TicketDTO;
 import airline.dto.UserDTO;
 import airline.model.Ticket;
 import airline.model.User;
+import airline.model.User.Role;
+import airline.security.AuthUtil;
+import airline.security.AuthUtil.AuthStatus;
 import airline.service.UserService;
 
 /**
@@ -39,6 +44,9 @@ public class UserController extends HttpServlet {
 				break;
 			case USER_ONE:
 				doGetOne(ControllerUtil.userId, request, response);
+				break;
+			case ROLES:
+				doGetRoles(request, response);
 				break;
 			case ERROR:
 				MessageDTO message = new MessageDTO("error", "uri error");
@@ -98,6 +106,18 @@ public class UserController extends HttpServlet {
 			response.getWriter().write(jsonData);	
 		}
 		
+	}
+	
+	protected void doGetRoles(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ArrayList<String> roles = new ArrayList<String>(); 
+		for (Role role : Role.values()) {
+			  roles.add(role.toString());
+		}
+		ObjectMapper mapper = new ObjectMapper();
+		String jsonData = mapper.writeValueAsString(roles);
+		response.setContentType("application/json");
+		response.setStatus(200);
+		response.getWriter().write(jsonData);	
 	}
 	
 	protected void doFindOne(String query, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -175,8 +195,36 @@ public class UserController extends HttpServlet {
 	
 	}
 	
+
+	
+	//REGISTRATION ONLY:
 	protected void doCreateUser(UserDTO uDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
+		
+		
+		//fill rest:
+		uDTO.setRegistrationDate(new Date());
+		uDTO.setRole(Role.REGULAR);
+		uDTO.setBlocked(false);
+		//======================================
+		//validate:
+		String validationMessage = UserValidator.validateCreate(uDTO);
+		if(validationMessage != "") {
+			System.out.println(validationMessage);
+			MessageDTO message = new MessageDTO("error", validationMessage);
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);
+			return;
+		}
+		//======================================
+		
+		
+		//hash password:
+		uDTO.setPassword(AuthUtil.hash(uDTO.getPassword(), "MD5"));
+		System.out.println(uDTO);
+		
 		User insertedUser;
 
 		insertedUser = UserService.create(User.userFromDTO(uDTO));
@@ -196,6 +244,7 @@ public class UserController extends HttpServlet {
 	
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
 		//Auth check -------------------
 		
 		
@@ -210,12 +259,61 @@ public class UserController extends HttpServlet {
 		switch(uriMeaning) {
 			case USER_UPDATE:
 				BufferedReader reader = request.getReader();
-				ObjectMapper mapper = new ObjectMapper();
 				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				mapper.setDateFormat(df);
 				UserDTO userDTO = mapper.readValue(reader, UserDTO.class);
-				doUpdateUser(userDTO, request, response);
-				break;
+				
+				//==========================================================
+				
+				//doUpdateUser(userDTO, request, response);
+	
+				//AUTH:
+				String token = request.getHeader("Authorization");
+				AuthStatus status = AuthUtil.authorizeToken(token, AuthUtil.getRoleFromToken(token));
+				if(status == AuthStatus.AUTHORIZED && AuthUtil.getRoleFromToken(token) == Role.ADMIN) {
+			
+					String validationMessage = UserValidator.validateAdminsUpdate(userDTO).get(0).toString();
+					UserDTO validatedUser = (UserDTO)UserValidator.validateAdminsUpdate(userDTO).get(1);
+					
+					if(validationMessage.equals("") && validatedUser != null) {
+						doUpdateUser(validatedUser, request, response);
+						System.out.println(validatedUser);
+						return;
+					}else {
+						System.out.println(validationMessage);
+						MessageDTO message = new MessageDTO("error", validationMessage);
+						String jsonData = mapper.writeValueAsString(message);
+						response.setContentType("application/json;charset=UTF-8");
+						response.setStatus(400);
+						response.getWriter().write(jsonData);
+						return;
+					}
+					
+				}else if(status == AuthStatus.AUTHORIZED && AuthUtil.getRoleFromToken(token) == Role.REGULAR) {
+					String validationMessage = UserValidator.validateUsersUpdate(userDTO).get(0).toString();
+					UserDTO validatedUser = (UserDTO)UserValidator.validateUsersUpdate(userDTO).get(1);
+					
+					if(validationMessage.equals("") && validatedUser != null) {
+						doUpdateUser(validatedUser, request, response);
+						System.out.println(validatedUser);
+						return;
+					}else {
+						System.out.println(validationMessage);
+						MessageDTO message = new MessageDTO("error", validationMessage);
+						String jsonData = mapper.writeValueAsString(message);
+						response.setContentType("application/json;charset=UTF-8");
+						response.setStatus(400);
+						response.getWriter().write(jsonData);
+						return;
+					}
+				}else {
+					MessageDTO message = new MessageDTO("error", "unauthrorized");
+					String jsonData = mapper.writeValueAsString(message);
+					response.setContentType("application/json");
+					response.setStatus(403);
+					response.getWriter().write(jsonData);	
+					return;
+				}
 			case ERROR:
 				MessageDTO message = new MessageDTO("error", "uri error");
 				mapper = new ObjectMapper();
@@ -237,6 +335,9 @@ public class UserController extends HttpServlet {
 	
 	protected void doUpdateUser(UserDTO dto, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
+		
+		//====================================================
+		
 		User changedUser;
 		
 		

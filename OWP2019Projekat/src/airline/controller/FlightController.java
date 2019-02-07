@@ -270,7 +270,7 @@ public class FlightController extends HttpServlet {
 	}
 
 	public void doCreateFlight(FlightDTO fDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ObjectMapper mapper = null;
+		ObjectMapper mapper = new ObjectMapper();
 		
 		
 		//authorization:
@@ -280,13 +280,13 @@ public class FlightController extends HttpServlet {
 		//validation:
 		String validationMessage = FlightValidator.validate(fDTO);
 		if(validationMessage != "") {
-//			MessageDTO message = new MessageDTO("error", validationMessage);
-//			String jsonData = mapper.writeValueAsString(message);
-//			response.setContentType("application/json;charset=UTF-8");
-//			response.setStatus(400);
-//			response.getWriter().write(jsonData);
-//			return;
 			System.out.println(validationMessage);
+			MessageDTO message = new MessageDTO("error", validationMessage);
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);
+			return;
 		}
 		
 		//=======================
@@ -295,19 +295,19 @@ public class FlightController extends HttpServlet {
 		Flight insertedFlight;
 		
 
-//		insertedFlight = FlightService.create(Flight.flightFromDTO(fDTO));
-//		if(insertedFlight != null) {
-//			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(insertedFlight));
-//			response.setContentType("application/json;charset=UTF-8");
-//			response.setStatus(201);
-//			response.getWriter().write(jsonData);
-//		}else {
-//			MessageDTO message = new MessageDTO("error", "processing_error");
-//			String jsonData = mapper.writeValueAsString(message);
-//			response.setContentType("application/json;charset=UTF-8");
-//			response.setStatus(400);
-//			response.getWriter().write(jsonData);	
-//		}
+		insertedFlight = FlightService.create(Flight.flightFromDTO(fDTO));
+		if(insertedFlight != null) {
+			String jsonData = mapper.writeValueAsString(FlightDTO.FlightDTOFactory(insertedFlight));
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(201);
+			response.getWriter().write(jsonData);
+		}else {
+			MessageDTO message = new MessageDTO("error", "processing_error");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);	
+		}
 	}
 
 	@Override
