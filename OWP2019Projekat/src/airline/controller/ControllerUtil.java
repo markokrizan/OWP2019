@@ -48,7 +48,11 @@ public class ControllerUtil {
 		TICKET_ONE,
 		TICKET_CREATE,
 		TICKET_UPDATE,
-		TICKET_DELETE
+		TICKET_DELETE,
+		
+		REPORT_TOTAL_ALL_TIME,
+		REPORT_BY_AIRPORT_ALL_TIME,
+		REPORT_BY_AIRPORT_SPECIFIC
 		
 		
 	}
@@ -80,8 +84,8 @@ public class ControllerUtil {
 						!uriComponents.get("entityName").equals("user") &&
 						!uriComponents.get("entityName").equals("flight") &&
 						!uriComponents.get("entityName").equals("ticket") &&
-						!uriComponents.get("entityName").equals("airport") 
-						
+						!uriComponents.get("entityName").equals("airport") &&
+						!uriComponents.get("entityName").equals("report")
 				) {
 					//wrong entity name:
 					return GenericUriMeaning.ERROR;
@@ -220,6 +224,22 @@ public class ControllerUtil {
 							//update airport:
 							airportId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.AIRPORT_UPDATE;
+						}else {
+							return GenericUriMeaning.ERROR;
+						}
+						
+
+						
+					}else if(uriComponents.get("entityName").equals("report")) {
+						if(uriComponents.get("entityId") == null && uriComponents.get("subcollection") == null) {
+							//all flights:
+							return GenericUriMeaning.ERROR;
+						}else if(uriComponents.get("entityId").equals("total-all-time") && uriComponents.get("subcollection") == null) {
+							return GenericUriMeaning.REPORT_TOTAL_ALL_TIME;
+						}else if(uriComponents.get("entityId").equals("by-airport-all-time") && uriComponents.get("subcollection") == null) {							
+							return GenericUriMeaning.REPORT_BY_AIRPORT_ALL_TIME;
+						}else if(uriComponents.get("entityId").equals("by-airport-specific") && uriComponents.get("subcollection") == null) {							
+							return GenericUriMeaning.REPORT_BY_AIRPORT_SPECIFIC;
 						}else {
 							return GenericUriMeaning.ERROR;
 						}

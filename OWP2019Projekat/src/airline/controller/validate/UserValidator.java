@@ -127,9 +127,6 @@ public class UserValidator {
 		if(uDTO.getUserName() == null || uDTO.getUserName().equals("")){
 			validationMessage += "Provide user name!\n";
 		}
-		if(uDTO.getPassword() == null || uDTO.getPassword().equals("")){
-			validationMessage += "Provide a password!\n";
-		}
 		if(uDTO.getFirstName() == null || uDTO.getFirstName().equals("")) {
 			validationMessage += "Provide a first name!\n";
 		}

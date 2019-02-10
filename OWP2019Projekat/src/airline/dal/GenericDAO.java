@@ -1,6 +1,5 @@
 package airline.dal;
 
-import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,8 +11,9 @@ import java.util.List;
 
 import com.mysql.jdbc.Statement;
 
+import airline.dto.ReportDTO;
 import airline.dto.SearchFlightDTO;
-import airline.dto.SearchUserDTO;
+import airline.dto.TotalReportDTO;
 import airline.model.Airport;
 import airline.model.Flight;
 import airline.model.Ticket;
@@ -1262,6 +1262,138 @@ public class GenericDAO {
 			return true;
 		}
 	}
+	
+	
+	public static ArrayList<ReportDTO> getReportByAirportAllTime(){
+		ArrayList<ReportDTO> reports = new ArrayList<ReportDTO>();
+		
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT * FROM total_by_airport_all_time;";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				String airportName = rset.getString("name");
+				Integer numberOfFlights = rset.getInt("no_of_flights");
+				Integer numberOfTickets = rset.getInt("total_tickets_sold");
+				Double totalRevenue = rset.getDouble("total_revenue");
+				
+				reports.add(new ReportDTO(airportName, numberOfFlights, numberOfTickets, totalRevenue));
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return reports;
+		
+	}
+	
+	public static ArrayList<ReportDTO> getSpecificReportByAirport(Date dateLow, Date dateHigh){
+		ArrayList<ReportDTO> reports = new ArrayList<ReportDTO>();
+		
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT name, count(flight_id) as no_of_flights, sum(no_of_sold_tickets) as total_tickets_sold, sum(total_revenue) as total_revenue \r\n" + 
+					"		FROM (\r\n" + 
+					"			SELECT a.airport_id, a.name, flight_id, count(ticket_id) as no_of_sold_tickets, price * count(ticket_id) AS total_revenue\r\n" + 
+					"			FROM \r\n" + 
+					"				airport a join flight f on a.airport_id = f.departure_airport_id or a.airport_id = f.arrival_airport_id\r\n" + 
+					"					left outer join ticket t on (f.flight_id = t.departure_flight_id or f.flight_id = t.arrival_flight_id) and t.sale_date IS NOT NULL\r\n" + 
+					"			WHERE departure_date between ? and ? or sale_date between ? and ?\r\n" + 
+					"			GROUP BY a.airport_id, f.flight_id\r\n" + 
+					"		) AS nested\r\n" + 
+					"GROUP BY airport_id, name;";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			if(dateLow == null) {
+				pstmt.setString(1, "1000-01-01 00:00:00");
+				pstmt.setString(3, "1000-01-01 00:00:00");
+			}else {
+				pstmt.setObject(1, dateLow);
+				pstmt.setObject(3, dateLow);
+			}
+			
+			if(dateHigh == null) {
+				pstmt.setString(2, "9999-12-31 23:59:59");
+				pstmt.setString(4, "9999-12-31 23:59:59");
+			}else {
+				pstmt.setObject(2, dateHigh);
+				pstmt.setObject(4, dateHigh);
+			}
+			
+			
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				String airportName = rset.getString("name");
+				Integer numberOfFlights = rset.getInt("no_of_flights");
+				Integer numberOfTickets = rset.getInt("total_tickets_sold");
+				Double totalRevenue = rset.getDouble("total_revenue");
+				
+				reports.add(new ReportDTO(airportName, numberOfFlights, numberOfTickets, totalRevenue));
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return reports;
+		
+	}
+	
+	public static ArrayList<TotalReportDTO> getReportAllTime(){
+		ArrayList<TotalReportDTO> reports = new ArrayList<TotalReportDTO>();
+		
+		Connection conn = ConnectionManager.getConnection();
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		
+		try {
+			String query = "SELECT * FROM total_all_time;";
+			
+			pstmt = conn.prepareStatement(query);
+			
+			System.out.println(pstmt);
+
+			rset = pstmt.executeQuery();
+			while (rset.next()) {
+				Integer totalFlights = rset.getInt("total_flights");
+				Integer totalTickets = rset.getInt("total_tickets");
+				Double totalRevenue = rset.getDouble("total");
+				
+				reports.add(new TotalReportDTO(totalFlights, totalTickets, totalRevenue));
+			}
+		} catch (SQLException ex) {
+			System.out.println("Greska u SQL upitu!");
+			ex.printStackTrace();
+		} finally {
+			try {pstmt.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+			try {rset.close();} catch (SQLException ex1) {ex1.printStackTrace();}
+		}
+		
+		return reports;
+		
+	}
+	
 	
 
 	

@@ -111,6 +111,21 @@
     <filter-name>AuthFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  <servlet>
+    <description></description>
+    <display-name>ReportController</display-name>
+    <servlet-name>ReportController</servlet-name>
+    <servlet-class>airline.controller.ReportController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ReportController</servlet-name>
+    <url-pattern>/report</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ReportController</servlet-name>
+    <url-pattern>/report/*</url-pattern>
+  </servlet-mapping>
+  
 </web-app>
 <!-- https://stackoverflow.com/questions/2437465/how-to-change-context-root-of-a-dynamic-web-project-in-eclipse -->
 <!-- https://coderanch.com/t/487496/java/set-Servlet-file-load-index -->

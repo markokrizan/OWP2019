@@ -424,6 +424,7 @@ public class UserController extends HttpServlet {
 		}
 	}
 	
+	//No need for this separate functionality, implemented within change operation
 	protected void doBlockUser(Integer userId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 
