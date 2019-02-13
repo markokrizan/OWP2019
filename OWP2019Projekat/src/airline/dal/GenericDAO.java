@@ -68,7 +68,6 @@ public class GenericDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		System.out.println(conn);
 		
 		String idName = idHelper(table);
 		
@@ -81,7 +80,6 @@ public class GenericDAO {
 			
 			int index = 1;
 			pstmt.setInt(index++, id);
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			if (rset.next()) {
@@ -156,13 +154,12 @@ public class GenericDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		System.out.println(conn);
+
 		
 		try {
 			String query = "SELECT * FROM " + table.toString() + " WHERE deleted = 0";
 
 			pstmt = conn.prepareStatement(query);
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -420,7 +417,6 @@ public class GenericDAO {
 				
 				pstmt.setInt(9, paramObject.getId());
 				
-				System.out.println(pstmt);
 				pstmt.executeUpdate();
 				
 				return object;
@@ -454,7 +450,6 @@ public class GenericDAO {
 				
 				pstmt.setInt(9, paramObject.getId());
 				
-				System.out.println(pstmt);
 				pstmt.executeUpdate();
 				
 				return object;
@@ -497,7 +492,6 @@ public class GenericDAO {
 				
 				pstmt.setInt(9, paramObject.getId());
 				
-				System.out.println(pstmt);
 				pstmt.executeUpdate();
 				
 				return object;
@@ -553,7 +547,6 @@ public class GenericDAO {
 			pstmt = conn.prepareStatement(query);	
 			pstmt.setInt(1, id);
 			
-			System.out.println(pstmt);
 			pstmt.executeUpdate();
 			return true;	
 			
@@ -572,7 +565,6 @@ public class GenericDAO {
 			pstmt = conn.prepareStatement(query);	
 			pstmt.setInt(1, id);
 			
-			System.out.println(pstmt);
 			pstmt.executeUpdate();
 			
 			pstmt.close();
@@ -592,7 +584,6 @@ public class GenericDAO {
 			
 		}else if(table == Table.TICKET) {
 			
-			System.out.println("DOSAO U GENERIC DAO");
 			
 			query = "UPDATE Ticket SET " +
 					"deleted = 1 " + 
@@ -603,7 +594,6 @@ public class GenericDAO {
 			pstmt = conn.prepareStatement(query);	
 			pstmt.setInt(1, id);
 			
-			System.out.println(pstmt);
 			pstmt.executeUpdate();
 			return true;	
 			
@@ -618,7 +608,6 @@ public class GenericDAO {
 			pstmt = conn.prepareStatement(query);	
 			pstmt.setInt(1, id);
 			
-			System.out.println(pstmt);
 			pstmt.executeUpdate();
 			return true;	
 			
@@ -644,7 +633,6 @@ public class GenericDAO {
 		pstmt = conn.prepareStatement(query);	
 		pstmt.setInt(1, id);
 		
-		System.out.println(pstmt);
 		pstmt.executeUpdate();
 		return true;	
 	}
@@ -822,7 +810,6 @@ public class GenericDAO {
 			try {
 				query = "SELECT * FROM user WHERE user_name LIKE ? OR role LIKE ?";
 				pstmt = conn.prepareStatement(query);
-				System.out.println("Query object: " + o.toString());
 				pstmt.setString(1, o.toString());
 				pstmt.setString(2, o.toString());
 				return pstmt;
@@ -845,8 +832,6 @@ public class GenericDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		
-		System.out.println(conn);
-		
 		if(o == null || o.toString().equals("") || o.toString() == null){
 			return getAll(table);
 		}
@@ -854,7 +839,6 @@ public class GenericDAO {
 		try {
 			pstmt = generateFindQuery(conn, table, o);
 			
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -936,7 +920,6 @@ public class GenericDAO {
 			
 			pstmt.setInt(1, userId);
 			
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -985,7 +968,6 @@ public class GenericDAO {
 			pstmt.setInt(1, flightId);
 			pstmt.setInt(2, flightId);
 			
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -1032,7 +1014,6 @@ public class GenericDAO {
 			
 			pstmt = conn.prepareStatement(query);
 			
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -1079,7 +1060,6 @@ public class GenericDAO {
 			pstmt.setInt(1, flight);
 			pstmt.setInt(2, flight);
 			
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -1133,7 +1113,6 @@ public class GenericDAO {
 			pstmt1.setInt(1, flight);
 			rset1 = pstmt1.executeQuery();
 			
-			System.out.println(pstmt1);
 			
 			
 			String query2 = "SELECT arrival_flight_seat_no FROM ticket WHERE arrival_flight_id = ? AND deleted = 0;";
@@ -1187,7 +1166,6 @@ public class GenericDAO {
 			
 			pstmt.setString(1, newNumber);
 	
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			if (rset.next()) {
@@ -1223,7 +1201,6 @@ public class GenericDAO {
 			
 			pstmt.setInt(1, airportId);
 	
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			if (rset.next()) {
@@ -1255,8 +1232,6 @@ public class GenericDAO {
 			
 			pstmt.setInt(1, flightId);
 	
-			System.out.println(pstmt);
-
 			rset = pstmt.executeQuery();
 			if (rset.next()) {
 				return true;
@@ -1299,7 +1274,6 @@ public class GenericDAO {
 			
 			pstmt = conn.prepareStatement(query);
 			
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -1360,7 +1334,6 @@ public class GenericDAO {
 			}
 			
 			
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {
@@ -1394,8 +1367,6 @@ public class GenericDAO {
 			String query = "SELECT * FROM total_all_time;";
 			
 			pstmt = conn.prepareStatement(query);
-			
-			System.out.println(pstmt);
 
 			rset = pstmt.executeQuery();
 			while (rset.next()) {

@@ -29,15 +29,10 @@ public class TicketValidator {
 		if(tDTO.getDepartureFlight() == null){
 			validationMessage += "Provide departure flight!\n";
 		}
-		if(tDTO.getArrivalFlight() == null){
-			validationMessage += "Provide arrival flight!\n";
-		}
 		if(tDTO.getDepartureFlightSeatNumber() == null){
 			validationMessage += "Provide departure flight seat!\n";
 		}
-		if(tDTO.getArrivalFlightSeatNumber() == null){
-			validationMessage += "Provide arrival flight seat!\n";
-		}
+		
 		if(tDTO.getReservationDate() == null){
 			validationMessage += "Provide reservation date!\n";
 		}
@@ -52,6 +47,8 @@ public class TicketValidator {
 			validationMessage += "Do not provide an id!\n";
 		}
 		
+		
+		
 		//if it exists
 		Boolean validDepartureFlight = TicketService.checkFLight(tDTO.getDepartureFlight().getId());
 		if(validDepartureFlight == null) {
@@ -60,15 +57,34 @@ public class TicketValidator {
 			validationMessage += "Departure flight not available!\n";
 		}
 		
-		//if exists plus not the same as departure
-		Boolean validArrivalFlight = TicketService.checkFLight(tDTO.getDepartureFlight().getId());
-		if(validArrivalFlight == null) {
-			validationMessage += "Error checking arrival flight availability!\\n";
-		}else if(tDTO.getDepartureFlight().getId() == tDTO.getArrivalFlight().getId()) {
-			validationMessage += "Arrival flight must be different than departure!\\n";
-		}else if(!validArrivalFlight) {
-			validationMessage += "Arrival flight not available\n";
+		if(tDTO.getArrivalFlight() != null){
+			//if exists plus not the same as departure
+			Boolean validArrivalFlight = TicketService.checkFLight(tDTO.getDepartureFlight().getId());
+			if(validArrivalFlight == null) {
+				validationMessage += "Error checking arrival flight availability!\\n";
+			}else if(tDTO.getDepartureFlight().getId() == tDTO.getArrivalFlight().getId()) {
+				validationMessage += "Arrival flight must be different than departure!\\n";
+			}else if(!validArrivalFlight) {
+				validationMessage += "Arrival flight not available\n";
+			}
+			
+			if(tDTO.getArrivalFlightSeatNumber() == null){
+				validationMessage += "Provide arrival flight seat!\n";
+			}else {
+				Boolean validArrivalFlightSeatNumber = TicketService.checkSeatAvailibility(tDTO.getDepartureFlight().getId(), tDTO.getDepartureFlightSeatNumber());
+				if(validArrivalFlightSeatNumber == null) {
+					validationMessage += "Error checking arrival seat availability!\\n";
+				}else if(!validArrivalFlightSeatNumber) {
+					validationMessage += "Arrival arrival not available!\n";
+				}
+			}
+			
+			
 		}
+		
+		
+		
+		
 		
 		Boolean validDepartureFlightSeatNumber = TicketService.checkSeatAvailibility(tDTO.getDepartureFlight().getId(), tDTO.getDepartureFlightSeatNumber());
 		if(validDepartureFlightSeatNumber == null) {
@@ -77,12 +93,7 @@ public class TicketValidator {
 			validationMessage += "Departure seat not available!\n";
 		}
 		
-		Boolean validArrivalFlightSeatNumber = TicketService.checkSeatAvailibility(tDTO.getDepartureFlight().getId(), tDTO.getDepartureFlightSeatNumber());
-		if(validArrivalFlightSeatNumber == null) {
-			validationMessage += "Error checking arrival seat availability!\\n";
-		}else if(!validArrivalFlightSeatNumber) {
-			validationMessage += "Arrival arrival not available!\n";
-		}
+		
 		
 
 		if(tDTO.getReservationDate().after(tDTO.getDepartureFlight().getDeparture())) {
@@ -118,21 +129,26 @@ public class TicketValidator {
 		if(tDTO.getDepartureFlight() == null){
 			validationMessage += "Provide departure flight!\n";
 		}
-		if(tDTO.getArrivalFlight() == null){
-			validationMessage += "Provide arrival flight!\n";
-		}
+		
 		if(tDTO.getDepartureFlightSeatNumber() == null){
 			validationMessage += "Provide departure flight seat!\n";
 		}
-		if(tDTO.getArrivalFlightSeatNumber() == null){
-			validationMessage += "Provide arrival flight seat!\n";
-		}
+		
 		if(tDTO.getReservationDate() == null){
 			validationMessage += "Provide reservation date!\n";
 		}
 		
 		
 		//=====================================
+		
+		
+		if(tDTO.getArrivalFlight() != null){
+			//check?
+			
+			if(tDTO.getArrivalFlightSeatNumber() == null){
+				//check?
+			}
+		}
 		
 		//seats?
 		
