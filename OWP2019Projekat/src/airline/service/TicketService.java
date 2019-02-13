@@ -1,10 +1,10 @@
 package airline.service;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import airline.dal.FlightDAO;
 import airline.dal.TicketDAO;
+import airline.dto.TicketDTO;
 import airline.model.Ticket;
 
 public class TicketService {
@@ -38,6 +38,8 @@ public class TicketService {
 	public static Boolean checkSeatAvailibility(Integer flightId, Integer seatNo) {
 		return FlightDAO.checkSeatAvailibility(flightId, seatNo);
 	}
+	
+
 	
 
 }

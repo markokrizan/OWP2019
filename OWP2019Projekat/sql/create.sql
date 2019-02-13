@@ -123,14 +123,14 @@ AS
 	FROM 
 		airport a join flight f on a.airport_id = f.departure_airport_id or a.airport_id = f.arrival_airport_id
 			left outer join ticket t on (f.flight_id = t.departure_flight_id or f.flight_id = t.arrival_flight_id) and t.sale_date IS NOT NULL
-	GROUP BY a.airport_id, f.flight_id;
+	GROUP BY a.airport_id, a.name, f.price, f.flight_id;
     
 -- ----------------------------------------------------
 
 CREATE VIEW total_by_airport_all_time
 AS
 	SELECT name, count(flight_id) as no_of_flights, sum(no_of_sold_tickets) as total_tickets_sold, sum(total_revenue) as total_revenue 
-		FROM report_specific_all_time
+		FROM report_specific_by_airport_all_time
 	GROUP BY airport_id, name;
 
 -- ----------------------------------------------------

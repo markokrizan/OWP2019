@@ -71,6 +71,33 @@ public class UserController extends HttpServlet {
 	
 	protected void doGetOne(Integer id, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
+		String token = request.getHeader("Authorization");
+		if(token == null || token.equals("null")) {
+			ObjectMapper mapper = new ObjectMapper();
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
+		//admin and the token user can request:
+		AuthStatus adminStatus = AuthUtil.authorizeToken(token, Role.ADMIN);
+		Boolean himself = AuthUtil.getUserFromToken(token).getId() == id;
+		System.out.println("ADMIN STATUS: " + adminStatus);
+		System.out.println("HIMSELF: " + himself);
+		if(adminStatus != AuthStatus.AUTHORIZED) {
+			if(!himself) {
+				ObjectMapper mapper = new ObjectMapper();
+				MessageDTO message = new MessageDTO("error", "unauthrorized");
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json");
+				response.setStatus(403);
+				response.getWriter().write(jsonData);	
+				return;
+			}
+		}
+		
 		User user = UserService.getOne(id);
 		System.out.println(user);
 		if(user != null) {
@@ -269,11 +296,24 @@ public class UserController extends HttpServlet {
 	
 				//AUTH:
 				String token = request.getHeader("Authorization");
+				//blocked
+				Boolean blocked = AuthUtil.getUserFromToken(token).getBlocked();
+				if(blocked) {
+					mapper = new ObjectMapper();
+					MessageDTO message = new MessageDTO("error", "unauthrorized");
+					String jsonData = mapper.writeValueAsString(message);
+					response.setContentType("application/json");
+					response.setStatus(403);
+					response.getWriter().write(jsonData);	
+					return;
+					
+				}
 				AuthStatus status = AuthUtil.authorizeToken(token, AuthUtil.getRoleFromToken(token));
 				if(status == AuthStatus.AUTHORIZED && AuthUtil.getRoleFromToken(token) == Role.ADMIN) {
-			
-					String validationMessage = UserValidator.validateAdminsUpdate(userDTO).get(0).toString();
-					UserDTO validatedUser = (UserDTO)UserValidator.validateAdminsUpdate(userDTO).get(1);
+					
+					ArrayList<Object> validation = UserValidator.validateAdminsUpdate(userDTO);
+					String validationMessage = validation.get(0).toString();
+					UserDTO validatedUser = (UserDTO)validation.get(1);
 					
 					if(validationMessage.equals("") && validatedUser != null) {
 						doUpdateUser(validatedUser, request, response);
@@ -290,8 +330,10 @@ public class UserController extends HttpServlet {
 					}
 					
 				}else if(status == AuthStatus.AUTHORIZED && AuthUtil.getRoleFromToken(token) == Role.REGULAR) {
-					String validationMessage = UserValidator.validateUsersUpdate(userDTO).get(0).toString();
-					UserDTO validatedUser = (UserDTO)UserValidator.validateUsersUpdate(userDTO).get(1);
+					ArrayList<Object> validation = UserValidator.validateUsersUpdate(userDTO);
+					String validationMessage = validation.get(0).toString();
+					UserDTO validatedUser = (UserDTO)validation.get(1);
+					
 					
 					if(validationMessage.equals("") && validatedUser != null) {
 						doUpdateUser(validatedUser, request, response);

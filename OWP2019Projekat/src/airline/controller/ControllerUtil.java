@@ -143,9 +143,8 @@ public class ControllerUtil {
 						}else if(uriComponents.get("entityId").equals("create") && uriComponents.get("subcollection") == null) {
 							//create user:
 							return GenericUriMeaning.FLIGHT_CREATE;
-						}else if(parsableChecker(uriComponents.get("entityId")) && uriComponents.get("subcollection").equals("update")) {
+						}else if(uriComponents.get("entityId").equals("update") && uriComponents.get("subcollection") == null) {
 							//update flights:
-							flightId = parser(uriComponents.get("entityId"));
 							return GenericUriMeaning.FLIGHT_UPDATE;
 						}else if(uriComponents.get("entityId").equals("search") && uriComponents.get("subcollection") == null) {
 							//search flights:

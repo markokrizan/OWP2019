@@ -2,6 +2,8 @@ package airline.controller;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import javax.servlet.ServletException;
@@ -16,6 +18,9 @@ import airline.dto.MessageDTO;
 import airline.dto.ReportDTO;
 import airline.dto.SearchReportDTO;
 import airline.dto.TotalReportDTO;
+import airline.model.User.Role;
+import airline.security.AuthUtil;
+import airline.security.AuthUtil.AuthStatus;
 import airline.service.ReportService;
 
 
@@ -26,6 +31,19 @@ public class ReportController extends HttpServlet {
 
 	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String token = request.getHeader("Authorization");
+		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
+		if(status != AuthStatus.AUTHORIZED) {
+			ObjectMapper mapper = new ObjectMapper();
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
+		
+		
 		String uri = request.getRequestURI();
 		GenericUriMeaning uriMeaning = ControllerUtil.genericChecker(uri);
 		switch(uriMeaning) {
@@ -34,6 +52,7 @@ public class ReportController extends HttpServlet {
 			break;
 		case REPORT_BY_AIRPORT_ALL_TIME:
 			doGetReportByAirportAllTime(request, response);
+			break;
 		case ERROR:
 			MessageDTO message = new MessageDTO("error", "uri error");
 			ObjectMapper mapper = new ObjectMapper();
@@ -46,6 +65,19 @@ public class ReportController extends HttpServlet {
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String token = request.getHeader("Authorization");
+		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
+		if(status != AuthStatus.AUTHORIZED) {
+			ObjectMapper mapper = new ObjectMapper();
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
+		
+	
 		ObjectMapper mapper = new ObjectMapper();
 		
 		String uri = request.getRequestURI();
@@ -54,6 +86,8 @@ public class ReportController extends HttpServlet {
 		case REPORT_BY_AIRPORT_SPECIFIC:
 			BufferedReader reader = request.getReader();
 			mapper = new ObjectMapper();
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			mapper.setDateFormat(df);
 			SearchReportDTO srDTO = mapper.readValue(reader, SearchReportDTO.class);
 			doGetReportByAirportSpecific(srDTO, request, response);
 			break;

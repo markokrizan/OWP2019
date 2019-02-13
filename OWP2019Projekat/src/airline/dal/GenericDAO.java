@@ -73,8 +73,9 @@ public class GenericDAO {
 		String idName = idHelper(table);
 		
 		try {
-			String query = "SELECT * FROM " + table.toString() + " WHERE " + idName + "=? AND deleted = 0";
-	
+			String deletedCondition = (table == table.FLIGHT) ? ";" : "AND deleted = 0;";
+			String query = "SELECT * FROM " + table.toString() + " WHERE " + idName + "= ? " + deletedCondition;
+			
 
 			pstmt = conn.prepareStatement(query);
 			
@@ -557,6 +558,11 @@ public class GenericDAO {
 			return true;	
 			
 		}else if(table == Table.FLIGHT) {
+			//transaction:
+			conn.setAutoCommit(false); 
+			conn.commit();
+			
+			
 			query = "UPDATE Flight SET " +
 					"deleted = 1 " + 
 					
@@ -568,6 +574,20 @@ public class GenericDAO {
 			
 			System.out.println(pstmt);
 			pstmt.executeUpdate();
+			
+			pstmt.close();
+			
+			query = "UPDATE ticket SET " + 
+					"deleted = 1 " + 
+					"WHERE (departure_flight_id = ? OR arrival_flight_id = ?) AND sale_date IS NULL;";
+			
+			pstmt = conn.prepareStatement(query);
+			pstmt.setInt(1, id);
+			pstmt.setInt(2, id);
+			
+			pstmt.executeUpdate();
+			conn.commit();
+			
 			return true;	
 			
 		}else if(table == Table.TICKET) {
@@ -1229,7 +1249,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT flight_id FROM flight WHERE id = ?;";
+			String query = "SELECT flight_id FROM flight WHERE flight_id = ?;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -1239,9 +1259,9 @@ public class GenericDAO {
 
 			rset = pstmt.executeQuery();
 			if (rset.next()) {
-				return false;
-			}else {
 				return true;
+			}else {
+				return false;
 			}
 		} catch (SQLException ex) {
 			System.out.println("Greska u SQL upitu!");
@@ -1253,6 +1273,9 @@ public class GenericDAO {
 		
 		return null;
 	}
+	
+	
+	
 	
 	public static Boolean checkFlightSeatAvailibility(Integer flightId, Integer seatNo) {
 		ArrayList<Integer> occupiedSeats =  getOccupiedSeats(flightId);

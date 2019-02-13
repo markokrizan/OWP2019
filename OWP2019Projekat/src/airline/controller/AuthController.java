@@ -44,20 +44,21 @@ public class AuthController extends HttpServlet {
 			if(user !=null) {
 				//return token
 				String token = AuthUtil.generateToken(user);
+				
+//				response.setStatus(200);
+//				System.out.println(token);
+//				response.setContentType("charset=UTF-8");
+//				response.setHeader("Pragma", token);
+				
+				MessageDTO message = new MessageDTO("success", token);
+				ObjectMapper mapper = new ObjectMapper();
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json;charset=UTF-8");
 				response.setStatus(200);
-				//There is a restriction to access response headers when you are using Fetch API over CORS. Due to this restriction, you can access only following standard headers:
-				//Cache-Control
-				//Content-Language
-				//Content-Type
-				//Expires
-				//Last-Modified
-				//Pragma
-				System.out.println(token);
-				response.setContentType("charset=UTF-8");
-				response.setHeader("Pragma", token);
+				response.getWriter().write(jsonData);
 				
 			}else {
-				MessageDTO message = new MessageDTO("error", "Wront credentials!");
+				MessageDTO message = new MessageDTO("error", "Wrong credentials!");
 				ObjectMapper mapper = new ObjectMapper();
 				String jsonData = mapper.writeValueAsString(message);
 				response.setContentType("application/json;charset=UTF-8");

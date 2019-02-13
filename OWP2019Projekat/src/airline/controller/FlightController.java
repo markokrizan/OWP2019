@@ -21,6 +21,9 @@ import airline.dto.SearchFlightDTO;
 import airline.dto.TicketDTO;
 import airline.model.Flight;
 import airline.model.Ticket;
+import airline.model.User.Role;
+import airline.security.AuthUtil;
+import airline.security.AuthUtil.AuthStatus;
 import airline.service.FlightService;
 
 /**
@@ -274,11 +277,21 @@ public class FlightController extends HttpServlet {
 		
 		
 		//authorization:
-		
+		String token = request.getHeader("Authorization");
+		//for example only admin can use this method
+		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
+		if(status != AuthStatus.AUTHORIZED) {
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
 		
 		//=======================
 		//validation:
-		String validationMessage = FlightValidator.validate(fDTO);
+		String validationMessage = FlightValidator.validateCreate(fDTO);
 		if(validationMessage != "") {
 			System.out.println(validationMessage);
 			MessageDTO message = new MessageDTO("error", validationMessage);
@@ -312,10 +325,12 @@ public class FlightController extends HttpServlet {
 
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		
 		//Auth check -------------------
 		
 		
-		
+	
 		
 		//------------------------------
 				
@@ -349,7 +364,35 @@ public class FlightController extends HttpServlet {
 	
 	protected void doUpdate(FlightDTO fDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
+		
+		
 		Flight changedFlight;
+		
+		//Authorize:
+		String token = request.getHeader("Authorization");
+		//for example only admin can use this method
+		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
+		if(status != AuthStatus.AUTHORIZED) {
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
+		
+		//Validate:
+		String validationMessage = FlightValidator.validateUpdate(fDTO);
+		if(validationMessage != "") {
+			System.out.println(validationMessage);
+			MessageDTO message = new MessageDTO("error", validationMessage);
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);
+			return;
+		}
+		
 		
 	
 		changedFlight = FlightService.update(Flight.flightFromDTO(fDTO));
@@ -400,7 +443,21 @@ public class FlightController extends HttpServlet {
 	}
 	
 	protected void doDeleteFlight(Integer flightId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		ObjectMapper mapper = new ObjectMapper();
+		
+		//Authorize:
+		String token = request.getHeader("Authorization");
+		//for example only admin can use this method
+		AuthStatus status = AuthUtil.authorizeToken(token, Role.ADMIN);
+		if(status != AuthStatus.AUTHORIZED) {
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
 
 		
 		Boolean successfullDeletion = FlightService.delete(flightId);

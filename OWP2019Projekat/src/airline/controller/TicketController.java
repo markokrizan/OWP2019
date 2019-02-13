@@ -14,9 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import airline.controller.ControllerUtil.GenericUriMeaning;
+import airline.controller.validate.FlightValidator;
+import airline.controller.validate.TicketValidator;
 import airline.dto.MessageDTO;
 import airline.dto.TicketDTO;
 import airline.model.Ticket;
+import airline.model.User.Role;
+import airline.security.AuthUtil;
+import airline.security.AuthUtil.AuthStatus;
 import airline.service.TicketService;
 
 /**
@@ -61,25 +66,70 @@ public class TicketController extends HttpServlet {
 	
 	
 	protected void doGetOne(Integer id, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Ticket ticket = TicketService.getOne(id);
-		if(ticket != null) {
+		
+		String token = request.getHeader("Authorization");
+		if(token == null || token.equals("null")) {
 			ObjectMapper mapper = new ObjectMapper();
-			String jsonData = mapper.writeValueAsString(new TicketDTO(ticket));
-			response.setContentType("application/json;charset=UTF-8");
-			response.setStatus(200);
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
 			response.getWriter().write(jsonData);	
-		}else {
+			return;
+		}
+		
+		Ticket ticket = TicketService.getOne(id);
+		
+		if(ticket == null) {
 			MessageDTO message = new MessageDTO("error", "invalid_ticket_id");
 			ObjectMapper mapper = new ObjectMapper();
 			String jsonData = mapper.writeValueAsString(message);
 			response.setContentType("application/json;charset=UTF-8");
 			response.setStatus(400);
 			response.getWriter().write(jsonData);	
+			return;
+		}
+		
+		
+		//admin and the token user can request:
+		AuthStatus adminStatus = AuthUtil.authorizeToken(token, Role.ADMIN);
+		Boolean himself = AuthUtil.getUserFromToken(token).getId() == ticket.getUser().getId();
+		if(adminStatus != AuthStatus.AUTHORIZED) {
+			if(!himself) {
+				ObjectMapper mapper = new ObjectMapper();
+				MessageDTO message = new MessageDTO("error", "unauthrorized");
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json");
+				response.setStatus(403);
+				response.getWriter().write(jsonData);	
+				return;
+			}
+		}
+		
+		
+		if(ticket != null) {
+			ObjectMapper mapper = new ObjectMapper();
+			String jsonData = mapper.writeValueAsString(new TicketDTO(ticket));
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(200);
+			response.getWriter().write(jsonData);	
 		}
 		
 	}
 	
 	protected void doGetAll(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String token = request.getHeader("Authorization");
+		AuthStatus adminStatus = AuthUtil.authorizeToken(token, Role.ADMIN);
+		if(adminStatus != AuthStatus.AUTHORIZED) {
+			ObjectMapper mapper = new ObjectMapper();
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
+		
 		ArrayList<Ticket> tickets = TicketService.getAll();
 		System.out.println(tickets);
 		if(tickets != null) {
@@ -145,6 +195,48 @@ public class TicketController extends HttpServlet {
 	
 	protected void doCreate(TicketDTO tDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
+		
+		//no token at all
+		String token = request.getHeader("Authorization");
+		if(token == null || token.equals("null")) {
+			mapper = new ObjectMapper();
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
+		
+		
+		
+		//blocked
+		Boolean blocked = AuthUtil.getUserFromToken(token).getBlocked();
+		if(blocked) {
+			mapper = new ObjectMapper();
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+			
+		}
+		
+		
+		//validate
+		String validationMessage = TicketValidator.validateCreate(tDTO);
+		if(validationMessage != "") {
+			System.out.println(validationMessage);
+			MessageDTO message = new MessageDTO("error", validationMessage);
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);
+			return;
+		}
+		
+		
 		Ticket insertedTicket;
 
 		insertedTicket = TicketService.create(Ticket.ticketFromDTO(tDTO));
@@ -208,6 +300,50 @@ public class TicketController extends HttpServlet {
 	
 	protected void doUpdate(TicketDTO tDTO, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
+		
+		String token = request.getHeader("Authorization");
+		if(token == null || token.equals("null")) {
+			mapper = new ObjectMapper();
+			MessageDTO message = new MessageDTO("error", "unauthrorized");
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json");
+			response.setStatus(403);
+			response.getWriter().write(jsonData);	
+			return;
+		}
+		
+		
+		//admin and user that created the reserveation:
+		AuthStatus adminStatus = AuthUtil.authorizeToken(token, Role.ADMIN);
+		Boolean himself = AuthUtil.getUserFromToken(token).getId() == tDTO.getUser().getId();
+		if(adminStatus != AuthStatus.AUTHORIZED) {
+			if(!himself) {
+				mapper = new ObjectMapper();
+				MessageDTO message = new MessageDTO("error", "unauthrorized");
+				String jsonData = mapper.writeValueAsString(message);
+				response.setContentType("application/json");
+				response.setStatus(403);
+				response.getWriter().write(jsonData);	
+				return;
+			}
+		}
+		
+		
+		
+		//validate:
+		String validationMessage = TicketValidator.validateUpdate(tDTO);
+		if(validationMessage != "") {
+			System.out.println(validationMessage);
+			MessageDTO message = new MessageDTO("error", validationMessage);
+			String jsonData = mapper.writeValueAsString(message);
+			response.setContentType("application/json;charset=UTF-8");
+			response.setStatus(400);
+			response.getWriter().write(jsonData);
+			return;
+		}
+		
+		
+		
 		Ticket changedTicket;
 		
 		
@@ -263,8 +399,6 @@ public class TicketController extends HttpServlet {
 	protected void doDeleteTicket(Integer ticketId, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 	
-		System.out.println("USAO U DELETE METODU, ID JE: " + ticketId);
-		
 		Boolean successfullDeletion = TicketService.delete(ticketId);
 		if(successfullDeletion == true) {
 			MessageDTO message = new MessageDTO("success", "succesfull_deletion");

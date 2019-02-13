@@ -8,6 +8,7 @@ public class Payload {
 	private String userName;
 	private String firstName;
 	private String lastName;
+	private Boolean blocked;
 	private Role role;
 	
 	
@@ -19,12 +20,13 @@ public class Payload {
 	
 
 	
-	public Payload(Integer userId, String userName, String firstName, String lastName, Role role) {
+	public Payload(Integer userId, String userName, String firstName, String lastName, Boolean blocked, Role role) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.blocked = blocked;
 		this.role = role;
 	}
 	
@@ -53,6 +55,17 @@ public class Payload {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+	
+	public Boolean getBlocked() {
+		return blocked;
+	}
+
+	public void setBlocked(Boolean blocked) {
+		this.blocked = blocked;
+	}
+
+
+
 	public Role getRole() {
 		return role;
 	}

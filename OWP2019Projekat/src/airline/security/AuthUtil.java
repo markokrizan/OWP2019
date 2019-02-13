@@ -26,7 +26,7 @@ public class AuthUtil {
 		System.out.println(user);
 		
 		Header header = new Header();
-		Payload payload = new Payload(user.getId(), user.getUserName(), user.getFirstName(), user.getLastName(), user.getRole());
+		Payload payload = new Payload(user.getId(), user.getUserName(), user.getFirstName(), user.getLastName(), user.getBlocked(), user.getRole());
 		Signature signature = new Signature(header, payload, serverSecret);
 		JWT jwt = new JWT(header, payload, signature);
 		
@@ -111,6 +111,7 @@ public class AuthUtil {
 			e.printStackTrace();
 		}
 		Integer userId = payload.getUserId();
+		System.out.println(userId);
 		return UserService.getOne(userId);
 		
 		

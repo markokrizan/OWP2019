@@ -20,7 +20,7 @@ public class TicketValidator {
 //	private Date ticketSaleDate;
 //	private UserDTO user;
 	
-	public static String validate(TicketDTO tDTO){
+	public static String validateCreate(TicketDTO tDTO){
 		String validationMessage = "";
 		
 		//check nulls or empty:
@@ -41,9 +41,7 @@ public class TicketValidator {
 		if(tDTO.getReservationDate() == null){
 			validationMessage += "Provide reservation date!\n";
 		}
-		if(tDTO.getTicketSaleDate() == null){
-			validationMessage += "Provide ticket sale date!\n";
-		}
+		
 		
 		
 		//=====================================
@@ -91,10 +89,60 @@ public class TicketValidator {
 			validationMessage += "Reservation date must be before departure date!\\n";
 		}
 		
-		if(tDTO.getTicketSaleDate().before(tDTO.getReservationDate())) {
-			validationMessage += "Sale date must be after reservation date!\n";
+		if(tDTO.getTicketSaleDate() != null) {
+			if(tDTO.getTicketSaleDate().before(tDTO.getReservationDate())) {
+				validationMessage += "Sale date must be after reservation date!\n";
+			}
 		}
 		
+		
+		
+		User user = UserService.getOne(tDTO.getUser().getId());
+		if(user == null) {
+			validationMessage += "Unknown or deleted user!\n";
+		}
+		
+		
+		return validationMessage;
+	}
+	
+	public static String validateUpdate(TicketDTO tDTO){
+		String validationMessage = "";
+		
+		//check nulls or empty:
+		
+
+		if(tDTO.getId() == null) {
+			validationMessage += "Provide an id!\n";
+		}
+		if(tDTO.getDepartureFlight() == null){
+			validationMessage += "Provide departure flight!\n";
+		}
+		if(tDTO.getArrivalFlight() == null){
+			validationMessage += "Provide arrival flight!\n";
+		}
+		if(tDTO.getDepartureFlightSeatNumber() == null){
+			validationMessage += "Provide departure flight seat!\n";
+		}
+		if(tDTO.getArrivalFlightSeatNumber() == null){
+			validationMessage += "Provide arrival flight seat!\n";
+		}
+		if(tDTO.getReservationDate() == null){
+			validationMessage += "Provide reservation date!\n";
+		}
+		
+		
+		//=====================================
+		
+		//seats?
+		
+		
+		if(tDTO.getTicketSaleDate() != null) {
+			if(tDTO.getTicketSaleDate().before(tDTO.getReservationDate())) {
+				validationMessage += "Sale date must be after reservation date!\n";
+			}
+		}
+				
 		
 		User user = UserService.getOne(tDTO.getUser().getId());
 		if(user == null) {
