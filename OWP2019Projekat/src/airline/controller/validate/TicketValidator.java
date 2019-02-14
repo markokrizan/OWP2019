@@ -33,9 +33,7 @@ public class TicketValidator {
 			validationMessage += "Provide departure flight seat!\n";
 		}
 		
-		if(tDTO.getReservationDate() == null){
-			validationMessage += "Provide reservation date!\n";
-		}
+		
 		
 		
 		
@@ -95,12 +93,14 @@ public class TicketValidator {
 		
 		
 		
-
-		if(tDTO.getReservationDate().after(tDTO.getDepartureFlight().getDeparture())) {
-			validationMessage += "Reservation date must be before departure date!\\n";
+		if(tDTO.getReservationDate() != null){
+			if(tDTO.getReservationDate().after(tDTO.getDepartureFlight().getDeparture())) {
+				validationMessage += "Reservation date must be before departure date!\\n";
+			}
 		}
 		
-		if(tDTO.getTicketSaleDate() != null) {
+		
+		if(tDTO.getTicketSaleDate() != null && tDTO.getReservationDate() != null) {
 			if(tDTO.getTicketSaleDate().before(tDTO.getReservationDate())) {
 				validationMessage += "Sale date must be after reservation date!\n";
 			}
