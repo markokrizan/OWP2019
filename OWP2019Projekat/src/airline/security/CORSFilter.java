@@ -35,8 +35,8 @@ public class CORSFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain) throws IOException, ServletException {
 		 	HttpServletRequest request = (HttpServletRequest)servletRequest;
-	        System.out.println("CORSFilter HTTP Request: " + request.getMethod());
-	        System.out.println("Authorization header: " + request.getHeader("Authorization"));
+//	        System.out.println("CORSFilter HTTP Request: " + request.getMethod());
+//	        System.out.println("Authorization header: " + request.getHeader("Authorization"));
 	     
 	        // Authorize (allow) all domains to consume the content
 	        ((HttpServletResponse)servletResponse).addHeader("Access-Control-Allow-Credentials", "true");

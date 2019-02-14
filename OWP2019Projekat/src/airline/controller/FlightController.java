@@ -229,6 +229,7 @@ public class FlightController extends HttpServlet {
 		
 		BufferedReader reader = null;
 		ObjectMapper mapper = null;
+		DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		
 		//Auth check -------------------
 		
@@ -253,13 +254,13 @@ public class FlightController extends HttpServlet {
 				//in do search it is already read, so if you try to read it again it throws io exception
 				reader = request.getReader();
 				mapper = new ObjectMapper();
+				mapper.setDateFormat(df);
 				SearchFlightDTO sfDTO = mapper.readValue(reader, SearchFlightDTO.class);
 				doSearch(sfDTO, request, response);
 				return;
 			case FLIGHT_CREATE:
 				reader = request.getReader();
 				mapper = new ObjectMapper();
-				DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				mapper.setDateFormat(df);
 				FlightDTO flightDTO = mapper.readValue(reader, FlightDTO.class);
 				doCreateFlight(flightDTO, request, response);

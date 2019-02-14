@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -700,13 +701,16 @@ public class GenericDAO {
 				hightestPrice = Double.parseDouble(queryObject.getHighestPrice());
 			}catch(Exception e) {}
 			try {
-				SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				//dont parse use string from JSON:
+				SimpleDateFormat format =new SimpleDateFormat("yyyy-MM-dd");
 				dateLowDeparture = format.parse(queryObject.getDateLowDeparture());
 				dateHighDeparture = format.parse(queryObject.getDateHighDeparture());
 				dateLowArrival = format.parse(queryObject.getDateLowArrival());
 				dateHighArrival = format.parse(queryObject.getDateHighArrival());
-			}catch(Exception e) {}
+				
+			}catch(Exception e) {System.out.println(e.getMessage());}
 			
+			//one parameter at least:
 			if(
 					(number != null && number != "") || 
 					(departureAirportIds != null && departureAirportIds.length > 0) || 
@@ -715,10 +719,13 @@ public class GenericDAO {
 					(dateLowDeparture != null && dateHighDeparture != null) ||
 					(dateLowArrival != null && dateHighArrival != null)
 					
-			) {
+			) 
+			// whare if one at least
+			{
 				query += " where ";
 			}
-					
+			
+			//individual checkes:
 			if(number != null && number != "") {
 				query += "number like '";
 				query += number;
@@ -759,6 +766,13 @@ public class GenericDAO {
 				query += hightestPrice;
 				
 			}
+			
+			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	        //to convert Date to String, use format method of SimpleDateFormat class.
+	        //String strDate = dateFormat.format(date);
+	 
+			System.out.println(dateLowDeparture);
+			System.out.println(dateHighDeparture);
 			if(dateLowDeparture != null && dateHighDeparture != null) {
 				if(
 						(number != null && number != "") || 
@@ -770,10 +784,18 @@ public class GenericDAO {
 					query += " and ";
 				}
 				query += "departure_date between ";
-				query += dateLowDeparture;
+				query += "'";
+				query += dateFormat.format(dateLowDeparture);
+				query += "'";
 				query += " and ";
-				query += dateHighDeparture;
+				query += "'";
+				query += dateFormat.format(dateHighDeparture);
+				query += "'";
 			}
+			
+			System.out.println(dateLowArrival);
+			System.out.println(dateHighArrival);
+			
 			if(dateLowArrival != null && dateHighArrival != null) {
 				if(
 						(number != null && number != "") || 
@@ -786,17 +808,23 @@ public class GenericDAO {
 					query += " and ";
 				}
 				query += "arrival_date between ";
-				query += dateLowArrival;
+				query += "'";
+				query += dateFormat.format(dateLowArrival);
+				query += "'";
 				query += " and ";
-				query += dateHighArrival;
+				query += "'";
+				query += dateFormat.format(dateHighArrival);
+				query += "'";
 			}
 			
 			
 			query += ";";
 			
-			System.out.println("Before processing into a pstmt: " + query);
-			System.out.println("DateLowDeparture " + dateLowDeparture);
-			System.out.println("DateHighDeparture " + dateHighDeparture);
+//			System.out.println("Before processing into a pstmt: " + query);
+//			System.out.println("DateLowDeparture " + dateLowDeparture);
+//			System.out.println("DateHighDeparture " + dateHighDeparture);
+			
+			System.out.println(query);
 			
 			
 			try {
