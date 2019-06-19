@@ -26,7 +26,7 @@ public class InitListener implements ServletContextListener {
 
 	public void contextInitialized(ServletContextEvent arg0) {
 		
-		ConnectionManager.open("Airline", "root", "");
+		ConnectionManager.open("Airline", "root", "root");
 		
 	}
 	

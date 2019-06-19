@@ -20,9 +20,9 @@ USE `Airline` ;
 -- -----------------------------------------------------
 -- Table `Airline`.`Airport`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Airline`.`Airport` ;
+DROP TABLE IF EXISTS `Airline`.`AIRPORT` ;
 
-CREATE TABLE IF NOT EXISTS `Airline`.`Airport` (
+CREATE TABLE IF NOT EXISTS `Airline`.`AIRPORT` (
   `airport_id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NOT NULL UNIQUE,
   `deleted` TINYINT NOT NULL,
@@ -33,9 +33,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Airline`.`Flight`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Airline`.`Flight` ;
+DROP TABLE IF EXISTS `Airline`.`FLIGHT` ;
 
-CREATE TABLE IF NOT EXISTS `Airline`.`Flight` (
+CREATE TABLE IF NOT EXISTS `Airline`.`FLIGHT` (
   `flight_id` INT NOT NULL AUTO_INCREMENT,
   `number` VARCHAR(100) NOT NULL UNIQUE,
   `departure_date` DATETIME NOT NULL,
@@ -62,9 +62,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Airline`.`User`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Airline`.`User` ;
+DROP TABLE IF EXISTS `Airline`.`USER` ;
 
-CREATE TABLE IF NOT EXISTS `Airline`.`User` (
+CREATE TABLE IF NOT EXISTS `Airline`.`USER` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `user_name` VARCHAR(50) NOT NULL UNIQUE,
   `password` VARCHAR(50) NOT NULL,
@@ -81,9 +81,9 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Airline`.`Ticket`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `Airline`.`Ticket` ;
+DROP TABLE IF EXISTS `Airline`.`TICKET` ;
 
-CREATE TABLE IF NOT EXISTS `Airline`.`Ticket` (
+CREATE TABLE IF NOT EXISTS `Airline`.`TICKET` (
   `ticket_id` INT NOT NULL AUTO_INCREMENT,
   `departure_flight_id` INT NOT NULL,
   `arrival_flight_id` INT NULL,

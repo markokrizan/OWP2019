@@ -241,7 +241,7 @@ public class GenericDAO {
 		try {
 			
 			if(table == Table.AIRPORT) {
-				query = "INSERT INTO Airport (name, deleted) VALUES (?, ?)";
+				query = "INSERT INTO " + table.toString() + " (name, deleted) VALUES (?, ?)";
 				pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 				Airport paramObject = (Airport)object;
 				
@@ -261,7 +261,7 @@ public class GenericDAO {
 				
 				
 			}else if (table == Table.FLIGHT) {
-				query = "INSERT INTO Flight (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)"
+				query = "INSERT INTO " + table.toString() + " (number, departure_date, arrival_date, departure_airport_id, arrival_airport_id, no_of_seats, price, deleted)"
 						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 				pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 				Flight paramObject = (Flight)object;
@@ -286,7 +286,7 @@ public class GenericDAO {
 				
 				
 			}else if (table == Table.USER) {
-				query = "INSERT INTO User(user_name, password, first_name, last_name, registration_date, role, blocked, deleted)"
+				query = "INSERT INTO " + table.toString() + " (user_name, password, first_name, last_name, registration_date, role, blocked, deleted)"
 						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 				pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 				User paramObject = (User)object;
@@ -309,7 +309,7 @@ public class GenericDAO {
 				
 			}else if (table == Table.TICKET) {
 				
-				query = "INSERT INTO Ticket (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)"
+				query = "INSERT INTO " + table.toString() + " (departure_flight_id, arrival_flight_id, departure_flight_seat_no, arrival_flight_seat_no, reservation_date, sale_date, user_id, deleted)"
 						+ "VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
 				
 				pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
@@ -364,13 +364,11 @@ public class GenericDAO {
 		
 		String query = null;
 		
-		
-		
 		try {
 			
 			if(table == Table.AIRPORT) {
 				
-				query = "UPDATE Airport SET " +
+				query = "UPDATE " + table.toString() + " SET " +
 						"name = ?, " + 
 						"deleted = ? " + 
 						
@@ -392,7 +390,7 @@ public class GenericDAO {
 			
 				
 			}else if (table == Table.FLIGHT) {
-				query = "UPDATE Flight SET "
+				query = "UPDATE " + table.toString() + " SET "
 						+ "number = ?, "
 						+ "departure_date = ?, "
 						+ "arrival_date = ?, "
@@ -425,7 +423,7 @@ public class GenericDAO {
 				
 			
 			}else if (table == Table.USER) {
-				query = "UPDATE User SET "
+				query = "UPDATE " + table.toString() + " SET "
 						+ "user_name = ?, "
 						+ "password = ?, "
 						+ "first_name = ?, "
@@ -458,7 +456,7 @@ public class GenericDAO {
 				
 			}else if (table == Table.TICKET) {
 				
-				query = "UPDATE Ticket SET "
+				query = "UPDATE " + table.toString() + " SET "
 						+ "departure_flight_id = ?, "
 						+ "arrival_flight_id = ?, "
 						+ "departure_flight_seat_no = ?, "
@@ -539,7 +537,7 @@ public class GenericDAO {
 		
 		if(table == Table.AIRPORT) {
 			
-			query = "UPDATE Airport SET " +
+			query = "UPDATE " + table.toString() + " SET " +
 					"deleted = 1 " + 
 					
 					"WHERE airport_id = ?";
@@ -557,7 +555,7 @@ public class GenericDAO {
 			conn.commit();
 			
 			
-			query = "UPDATE Flight SET " +
+			query = "UPDATE " + table.toString() + " SET " +
 					"deleted = 1 " + 
 					
 					"WHERE flight_id = ?";
@@ -586,7 +584,7 @@ public class GenericDAO {
 		}else if(table == Table.TICKET) {
 			
 			
-			query = "UPDATE Ticket SET " +
+			query = "UPDATE " + table.toString() + " SET " +
 					"deleted = 1 " + 
 					
 					"WHERE ticket_id = ?";
@@ -600,7 +598,7 @@ public class GenericDAO {
 			
 		}else if(table == Table.USER) {
 			
-			query = "UPDATE User SET " +
+			query = "UPDATE " + table.toString() + " SET " +
 					"deleted = 1 " + 
 					
 					"WHERE user_id = ?";
@@ -625,7 +623,7 @@ public class GenericDAO {
 		
 		String query = null;
 		
-		query = "UPDATE User SET " +
+		query = "UPDATE USER SET " +
 				"blocked = 1 " + 
 				
 				"WHERE user_id = ?";
@@ -676,7 +674,7 @@ public class GenericDAO {
 			
 			//prepare the query:
 			
-			query = "select * from flight";
+			query = "select * from " + table.toString();
 			SearchFlightDTO queryObject = SearchFlightDTO.class.cast(o);
 			
 			
@@ -836,7 +834,7 @@ public class GenericDAO {
 			break;
 		case USER:
 			try {
-				query = "SELECT * FROM user WHERE user_name LIKE ? OR role LIKE ?";
+				query = "SELECT * FROM " + table.toString() + " WHERE user_name LIKE ? OR role LIKE ?";
 				pstmt = conn.prepareStatement(query);
 				pstmt.setString(1, o.toString());
 				pstmt.setString(2, o.toString());
@@ -942,7 +940,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM ticket WHERE user_id = ? AND deleted = 0;";
+			String query = "SELECT * FROM TICKET WHERE user_id = ? AND deleted = 0;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -989,7 +987,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM ticket WHERE departure_flight_id = ?  OR arrival_flight_id = ?;";
+			String query = "SELECT * FROM TICKET WHERE departure_flight_id = ?  OR arrival_flight_id = ?;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -1038,7 +1036,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM flight WHERE departure_date >= NOW() AND deleted = 0;";
+			String query = "SELECT * FROM FLIGHT WHERE departure_date >= NOW() AND deleted = 0;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -1081,7 +1079,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT * FROM flight WHERE departure_airport_id IN (SELECT arrival_airport_id FROM flight WHERE flight_id = ? AND departure_date > NOW()) AND departure_date >= (SELECT arrival_date FROM flight WHERE flight_id = ? AND departure_date > NOW() AND deleted = 0);";
+			String query = "SELECT * FROM FLIGHT WHERE departure_airport_id IN (SELECT arrival_airport_id FROM FLIGHT WHERE flight_id = ? AND departure_date > NOW()) AND departure_date >= (SELECT arrival_date FROM FLIGHT WHERE flight_id = ? AND departure_date > NOW() AND deleted = 0);";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -1135,7 +1133,7 @@ public class GenericDAO {
 		
 		try {
 			
-			String query1 = "SELECT departure_flight_seat_no FROM ticket WHERE departure_flight_id = ? AND deleted = 0;";
+			String query1 = "SELECT departure_flight_seat_no FROM TICKET WHERE departure_flight_id = ? AND deleted = 0;";
 			
 			pstmt1 = conn.prepareStatement(query1);
 			pstmt1.setInt(1, flight);
@@ -1143,7 +1141,7 @@ public class GenericDAO {
 			
 			
 			
-			String query2 = "SELECT arrival_flight_seat_no FROM ticket WHERE arrival_flight_id = ? AND deleted = 0;";
+			String query2 = "SELECT arrival_flight_seat_no FROM TICKET WHERE arrival_flight_id = ? AND deleted = 0;";
 			
 			pstmt2 = conn.prepareStatement(query2);
 			pstmt2.setInt(1, flight);
@@ -1188,7 +1186,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT number FROM flight WHERE number LIKE ?;";
+			String query = "SELECT number FROM FLIGHT WHERE number LIKE ?;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -1223,7 +1221,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT airport_id FROM airport WHERE airport_id = ?;";
+			String query = "SELECT airport_id FROM AIRPORT WHERE airport_id = ?;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -1254,7 +1252,7 @@ public class GenericDAO {
 		ResultSet rset = null;
 		
 		try {
-			String query = "SELECT flight_id FROM flight WHERE flight_id = ?;";
+			String query = "SELECT flight_id FROM FLIGHT WHERE flight_id = ?;";
 			
 			pstmt = conn.prepareStatement(query);
 			
@@ -1336,8 +1334,8 @@ public class GenericDAO {
 					"		FROM (\r\n" + 
 					"			SELECT a.airport_id, a.name, flight_id, count(ticket_id) as no_of_sold_tickets, price * count(ticket_id) AS total_revenue\r\n" + 
 					"			FROM \r\n" + 
-					"				airport a join flight f on a.airport_id = f.departure_airport_id or a.airport_id = f.arrival_airport_id\r\n" + 
-					"					left outer join ticket t on (f.flight_id = t.departure_flight_id or f.flight_id = t.arrival_flight_id) and t.sale_date IS NOT NULL\r\n" + 
+					"				AIRPORT a join FLIGHT f on a.airport_id = f.departure_airport_id or a.airport_id = f.arrival_airport_id\r\n" + 
+					"					left outer join TICKET t on (f.flight_id = t.departure_flight_id or f.flight_id = t.arrival_flight_id) and t.sale_date IS NOT NULL\r\n" + 
 					"			WHERE departure_date between ? and ? or sale_date between ? and ?\r\n" + 
 					"			GROUP BY a.airport_id, f.flight_id\r\n" + 
 					"		) AS nested\r\n" + 
